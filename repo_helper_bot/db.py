@@ -25,10 +25,9 @@
 
 # stdlib
 import json
-
-# 3rd party
 import os
 
+# 3rd party
 # from domdf_python_tools.paths import PathPlus
 from flask_sqlalchemy import SQLAlchemy
 
