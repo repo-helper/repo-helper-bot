@@ -1,0 +1,6 @@
+{
+  "name": "repo-helper-bot",
+  "description": "I keep your repository configuration up-to-date using 'repo_helper'.",
+  "image": "heroku/python",
+  "repository": "https://github.com/repo-helper/repo-helper-bot"
+}

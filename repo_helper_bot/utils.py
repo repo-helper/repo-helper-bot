@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 #
-#  __init__.py
-"""
-I keep your repository configuration up-to-date using 'repo_helper'.
-"""
+#  utils.py
 #
 #  Copyright © 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
@@ -26,11 +23,43 @@ I keep your repository configuration up-to-date using 'repo_helper'.
 #  OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-__author__: str = "Dominic Davis-Foster"
-__copyright__: str = "2020 Dominic Davis-Foster"
-__license__: str = "MIT License"
-__version__: str = "0.0.0"
-__email__: str = "dominic@davis-foster.co.uk"
+# stdlib
+import os
+from contextlib import contextmanager
+from datetime import datetime
 
-# TODO: Sign commit
-# See https://stackoverflow.com/questions/22968856/what-is-the-file-format-of-a-git-commit-object-data-structure
+__all__ = ["commit_as_bot", "log"]
+
+
+@contextmanager
+def commit_as_bot():
+	"""
+	Context manager to set the Git committer name and email to that of the bot.
+	"""
+
+	_environ = dict(os.environ)  # or os.environ.copy()
+	try:
+		name = "repo-helper[bot]"
+		email = f"74742576+{name}@users.noreply.github.com"
+
+		os.environ["GIT_COMMITTER_NAME"] = name
+		os.environ["GIT_COMMITTER_EMAIL"] = email
+		os.environ["GIT_AUTHOR_NAME"] = name
+		os.environ["GIT_AUTHOR_EMAIL"] = email
+
+		yield
+
+	finally:
+		os.environ.clear()
+		os.environ.update(_environ)
+
+
+def log(message: str, type: str = "INFO"):
+	"""
+	Log a message to the terminal.
+
+	:param message:
+	:param type:
+	"""
+
+	print(f"[{datetime.now():%Y-%m-%d %H:%M:%S%z}] [{type}] {message}")

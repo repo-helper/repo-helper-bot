@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 #
-#  __init__.py
-"""
-I keep your repository configuration up-to-date using 'repo_helper'.
-"""
+#  constants.py
 #
 #  Copyright © 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
@@ -26,11 +23,35 @@ I keep your repository configuration up-to-date using 'repo_helper'.
 #  OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-__author__: str = "Dominic Davis-Foster"
-__copyright__: str = "2020 Dominic Davis-Foster"
-__license__: str = "MIT License"
-__version__: str = "0.0.0"
-__email__: str = "dominic@davis-foster.co.uk"
+# stdlib
+import os
 
-# TODO: Sign commit
-# See https://stackoverflow.com/questions/22968856/what-is-the-file-format-of-a-git-commit-object-data-structure
+# 3rd party
+from flask import Flask
+from flask_githubapp import GitHubApp
+from github3 import GitHub
+
+app = Flask(__name__)
+
+GITHUBAPP_ID = app.config["GITHUBAPP_ID"] = int(os.environ["GITHUBAPP_ID"])
+GITHUBAPP_SECRET = app.config["GITHUBAPP_SECRET"] = os.environ["GITHUBAPP_SECRET"]
+
+if "GITHUBAPP_KEY" in os.environ:
+	GITHUBAPP_KEY = app.config["GITHUBAPP_KEY"] = os.environ["GITHUBAPP_KEY"]
+else:
+	with open(os.environ["GITHUBAPP_KEY_PATH"], "rb") as key_file:
+		GITHUBAPP_KEY = app.config["GITHUBAPP_KEY"] = key_file.read()
+
+github_app = GitHubApp(app)
+
+client = GitHub()
+client.login_as_app(GITHUBAPP_KEY, GITHUBAPP_ID)
+
+__all__ = [
+		"github_app",
+		"app",
+		"client",
+		"GITHUBAPP_ID",
+		"GITHUBAPP_SECRET",
+		"GITHUBAPP_KEY",
+		]

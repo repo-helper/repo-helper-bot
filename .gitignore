@@ -85,3 +85,10 @@ profile_default/
 ipython_config.py
 Pipfile.lock
 .pyre/
+secrets
+secrets.py
+updater.py
+run.sh
+*.pem
+*.sqlite
+db_create.py

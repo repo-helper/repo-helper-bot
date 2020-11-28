@@ -19,3 +19,12 @@ python_versions:
  - 3.7
  - 3.8
  - 3.9
+
+additional_ignore:
+ - secrets
+ - secrets.py
+ - updater.py
+ - run.sh
+ - "*.pem"
+ - "*.sqlite"
+ - "db_create.py"

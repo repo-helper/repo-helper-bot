@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 #
-#  __init__.py
-"""
-I keep your repository configuration up-to-date using 'repo_helper'.
-"""
+#  db.py
 #
 #  Copyright © 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
@@ -26,11 +23,43 @@ I keep your repository configuration up-to-date using 'repo_helper'.
 #  OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-__author__: str = "Dominic Davis-Foster"
-__copyright__: str = "2020 Dominic Davis-Foster"
-__license__: str = "MIT License"
-__version__: str = "0.0.0"
-__email__: str = "dominic@davis-foster.co.uk"
+# stdlib
+import json
 
-# TODO: Sign commit
-# See https://stackoverflow.com/questions/22968856/what-is-the-file-format-of-a-git-commit-object-data-structure
+# 3rd party
+from domdf_python_tools.paths import PathPlus
+from flask_sqlalchemy import SQLAlchemy
+
+# this package
+from repo_helper_bot.constants import app
+
+__all__ = ["Repository"]
+
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{PathPlus.cwd()/'repo_helper.sqlite'}"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db = SQLAlchemy(app)
+
+
+class Repository(db.Model):
+	id = db.Column(db.INTEGER, primary_key=True)
+	owner = db.Column(db.String(128))
+	name = db.Column(db.String(128))
+	last_pr = db.Column(db.DATETIME)
+	# pull_requests = db.Column(PreviousPullRequests(256))
+	pull_requests = db.Column(db.String(128))
+
+	@property
+	def fullname(self) -> str:
+		return f"{self.owner}/{self.name}"
+
+	def __repr__(self):
+		return f'<Repository {self.fullname!r}>'
+
+	def add_pr(self, number: int):
+		current_prs = json.loads(self.pull_requests)
+		current_prs.insert(0, number)
+		self.pull_requests = json.dumps(current_prs[:10])
+
+	def get_prs(self):
+		return json.loads(self.pull_requests)
