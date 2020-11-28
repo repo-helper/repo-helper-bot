@@ -27,7 +27,9 @@
 import json
 
 # 3rd party
-from domdf_python_tools.paths import PathPlus
+import os
+
+# from domdf_python_tools.paths import PathPlus
 from flask_sqlalchemy import SQLAlchemy
 
 # this package
@@ -35,7 +37,8 @@ from repo_helper_bot.constants import app
 
 __all__ = ["Repository"]
 
-app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{PathPlus.cwd()/'repo_helper.sqlite'}"
+# app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{PathPlus.cwd()/'repo_helper.sqlite'}"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
@@ -45,7 +48,7 @@ class Repository(db.Model):
 	id = db.Column(db.INTEGER, primary_key=True)
 	owner = db.Column(db.String(128))
 	name = db.Column(db.String(128))
-	last_pr = db.Column(db.DATETIME)
+	last_pr = db.Column(db.FLOAT)
 	# pull_requests = db.Column(PreviousPullRequests(256))
 	pull_requests = db.Column(db.String(128))
 

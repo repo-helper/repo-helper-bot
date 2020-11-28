@@ -88,7 +88,7 @@ def update_repository(repository: Dict, recreate: bool = False):
 				id=repository["id"],
 				owner=repository["owner"]["login"],
 				name=repository["name"],
-				last_pr=datetime.fromtimestamp(100),
+				last_pr=100,
 				pull_requests="[]",
 				)
 		db.session.add(db_repository)
@@ -99,7 +99,7 @@ def update_repository(repository: Dict, recreate: bool = False):
 
 	db.session.commit()
 
-	if db_repository.last_pr.day == datetime.now():
+	if datetime.fromtimestamp(db_repository.last_pr).day == datetime.now():
 		print(f"A PR for {db_repository.fullname} has already been created today. Skipping.")
 		return 1
 
@@ -231,7 +231,7 @@ def update_repository(repository: Dict, recreate: bool = False):
 			if created_pr is not None:
 				db_repository.add_pr(int(created_pr.number))
 
-		db_repository.last_pr = datetime.now()
+		db_repository.last_pr = datetime.now().timestamp()
 		db.session.commit()
 
 		print("Success!")
