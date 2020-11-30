@@ -25,17 +25,17 @@ repo_helper_bot
 
 
 
-.. |travis| image:: https://img.shields.io/travis/com/domdfcoding/repo_helper_bot/master?logo=travis
-	:target: https://travis-ci.com/domdfcoding/repo_helper_bot
-	:alt: Travis Build Status
+.. |travis| image:: https://github.com/domdfcoding/repo_helper_bot/workflows/Linux%20Tests/badge.svg
+	:target: https://github.com/domdfcoding/repo_helper_bot/actions?query=workflow%3A%22Linux+Tests%22
+	:alt: Linux Test Status
 
 .. |actions_windows| image:: https://github.com/domdfcoding/repo_helper_bot/workflows/Windows%20Tests/badge.svg
 	:target: https://github.com/domdfcoding/repo_helper_bot/actions?query=workflow%3A%22Windows+Tests%22
-	:alt: Windows Tests Status
+	:alt: Windows Test Status
 
 .. |actions_macos| image:: https://github.com/domdfcoding/repo_helper_bot/workflows/macOS%20Tests/badge.svg
 	:target: https://github.com/domdfcoding/repo_helper_bot/actions?query=workflow%3A%22macOS+Tests%22
-	:alt: macOS Tests Status
+	:alt: macOS Test Status
 
 .. |requires| image:: https://requires.io/github/domdfcoding/repo_helper_bot/requirements.svg?branch=master
 	:target: https://requires.io/github/domdfcoding/repo_helper_bot/requirements/?branch=master
@@ -93,4 +93,13 @@ Installation
 --------------
 
 .. start installation
+
+``repo_helper_bot`` can be installed from GitHub.
+
+To install with ``pip``:
+
+.. code-block:: bash
+
+	$ python -m pip install git+https://github.com/domdfcoding/repo_helper_bot
+
 .. end installation

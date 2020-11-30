@@ -91,3 +91,4 @@ run.sh
 *.pem
 *.sqlite
 db_create.py
+automerge.py

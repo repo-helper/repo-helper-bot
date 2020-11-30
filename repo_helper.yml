@@ -28,3 +28,4 @@ additional_ignore:
  - "*.pem"
  - "*.sqlite"
  - "db_create.py"
+ - automerge.py
