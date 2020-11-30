@@ -25,9 +25,11 @@
 
 # stdlib
 import os
+from http import HTTPStatus
+from typing import Optional
 
 # 3rd party
-from flask import Flask
+from flask import Flask, Response, redirect, request, url_for
 from flask_githubapp import GitHubApp
 from github3 import GitHub
 
@@ -47,6 +49,26 @@ github_app = GitHubApp(app)
 
 client = GitHub()
 client.login_as_app(GITHUBAPP_KEY, GITHUBAPP_ID)
+
+
+def https_redirect() -> Optional[Response]:
+	"""
+	Based on https://stackoverflow.com/a/59771351
+
+	By Maximilian Burszley <https://stackoverflow.com/users/8188846/maximilian-burszley>
+
+	CC BY-SA 4.0
+	"""
+
+	if request.scheme == "http":
+		return redirect(
+				url_for(request.endpoint, _scheme="https", _external=True),
+				HTTPStatus.PERMANENT_REDIRECT,
+				)
+
+
+if "ON_HEROKU" in os.environ:
+	app.before_request(https_redirect)
 
 __all__ = [
 		"github_app",
