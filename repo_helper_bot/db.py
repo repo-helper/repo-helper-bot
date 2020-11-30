@@ -28,7 +28,7 @@ import json
 import os
 
 # 3rd party
-# from domdf_python_tools.paths import PathPlus
+from domdf_python_tools.paths import PathPlus
 from flask_sqlalchemy import SQLAlchemy
 
 # this package
@@ -36,8 +36,11 @@ from repo_helper_bot.constants import app
 
 __all__ = ["Repository"]
 
-# app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{PathPlus.cwd()/'repo_helper.sqlite'}"
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
+if "DATABASE_URL" in os.environ:
+	app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
+else:
+	app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{PathPlus.cwd()/'repo_helper.sqlite'}"
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
