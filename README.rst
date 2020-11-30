@@ -2,6 +2,8 @@
 repo_helper_bot
 ################
 
+🐍 🤖
+
 .. start short_desc
 
 **I keep your repository configuration up-to-date using 'repo_helper'.**
@@ -103,3 +105,19 @@ To install with ``pip``:
 	$ python -m pip install git+https://github.com/domdfcoding/repo_helper_bot
 
 .. end installation
+
+
+Deploying to Heroku
+---------------------
+
+.. image:: https://www.herokucdn.com/deploy/button.svg
+	:target: https://heroku.com/deploy?template=https://github.com/repo-helper/repo-helper-bot
+	:alt: Deploy
+
+1. `Create a GitHub App <https://developer.github.com/apps/building-github-apps/creating-a-github-app/>`_
+2. Create Heroku project.
+3. In the Heroku app's settings, set the following Config Vars:
+
+   * ``GITHUBAPP_ID`` -- The ID of the GitHub App.
+   * ``GITHUBAPP_KEY`` -- The private key of the GitHub App.
+   * ``GITHUBAPP_SECRET`` -- The webhook secret of the GitHub App.
