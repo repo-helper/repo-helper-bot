@@ -27,8 +27,13 @@
 import os
 from contextlib import contextmanager
 from datetime import datetime
+from functools import partial
+from textwrap import dedent
 
-__all__ = ["commit_as_bot", "log"]
+# this package
+from repo_helper_bot.constants import GITHUBAPP_ID, GITHUBAPP_KEY, client
+
+__all__ = ["commit_as_bot", "log", "login_as_app", "login_as_app_installation"]
 
 
 @contextmanager
@@ -63,3 +68,35 @@ def log(message: str, type: str = "INFO"):
 	"""
 
 	print(f"[{datetime.now():%Y-%m-%d %H:%M:%S%z}] [{type}] {message}")
+
+
+def make_pr_details():
+	return dedent(
+			"""\
+	<details>
+		<summary>Commands</summary>
+
+		* `@repo-helper recreate` will recreate the pull request by checking
+		  out the current master branch and running `repo-helper` on that.
+	</details>
+	"""
+			)
+
+
+# See also https://gist.github.com/pierrejoubert73/902cc94d79424356a8d20be2b382e1ab
+
+login_as_app = partial(client.login_as_app, GITHUBAPP_KEY, GITHUBAPP_ID)
+
+
+def login_as_app_installation(owner: str, repository: str) -> int:
+	installation_id = client.app_installation_for_repository(
+			owner=owner,
+			repository=repository,
+			).id
+	client.login_as_app_installation(
+			GITHUBAPP_KEY,
+			GITHUBAPP_ID,
+			installation_id,
+			)
+
+	return installation_id

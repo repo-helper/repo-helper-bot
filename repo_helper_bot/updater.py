@@ -22,31 +22,34 @@
 #  OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 #  OR OTHER DEALINGS IN THE SOFTWARE.
 #
+
 # stdlib
 import sys
 from datetime import datetime
 from subprocess import Popen
 from tempfile import TemporaryDirectory
 from textwrap import indent, wrap
-from typing import Dict, Iterator, Optional
+from typing import Dict, Iterable, Iterator, Optional, Union
 
 # 3rd party
 import dulwich.porcelain
-import github3
-import github3.repos.repo
+import dulwich.repo
 from domdf_python_tools.paths import in_directory
+from domdf_python_tools.typing import PathLike
 from dulwich.errors import CommitError
 from github3 import apps
 from github3.apps import Installation
 from github3.exceptions import NotFoundError
+from github3.pulls import ShortPullRequest
+from github3.repos import Repository as GitHubRepository
 from repo_helper.cli.utils import commit_changed_files
 from repo_helper.core import RepoHelper
 from southwark.repo import Repo
 
 # this package
-from repo_helper_bot.constants import GITHUBAPP_ID, GITHUBAPP_KEY, client
-# TODO: don't be triggered by merging own PR, or at the least clone, check commit message and skip
+from repo_helper_bot.constants import BRANCH_NAME, GITHUBAPP_ID, GITHUBAPP_KEY, client
 from repo_helper_bot.db import Repository, db
+from repo_helper_bot.utils import login_as_app, login_as_app_installation
 
 __all__ = ["iter_installed_repos", "run_update", "update_repository"]
 
@@ -82,22 +85,9 @@ def update_repository(repository: Dict, recreate: bool = False):
 	# TODO: rebase
 	# TODO: if branch already exists and PR has been merged, abort
 
-	db_repository: Optional[Repository] = Repository.query.get(repository["id"])
-	if db_repository is None:
-		db_repository = Repository(
-				id=repository["id"],
-				owner=repository["owner"]["login"],
-				name=repository["name"],
-				last_pr=100,
-				pull_requests="[]",
-				)
-		db.session.add(db_repository)
-	else:
-		# Update name of existing repo
-		db_repository.owner = repository["owner"]["login"]
-		db_repository.name = repository["name"]
-
-	db.session.commit()
+	db_repository: Repository = get_db_repository(
+			repo_id=repository["id"], owner=repository["owner"]["login"], name=repository["name"]
+			)
 
 	if datetime.fromtimestamp(db_repository.last_pr).day == datetime.now():
 		print(f"A PR for {db_repository.fullname} has already been created today. Skipping.")
@@ -105,23 +95,14 @@ def update_repository(repository: Dict, recreate: bool = False):
 
 	owner = repository["owner"]["login"]
 	repository_name = repository["name"]
-	branch_name = "repo-helper-update"
 
 	# Log in as the app
-	client.login_as_app(GITHUBAPP_KEY, GITHUBAPP_ID)
+	login_as_app()
 
 	# Log in as installation
-	installation_id = client.app_installation_for_repository(
-			owner=owner,
-			repository=repository_name,
-			).id
-	client.login_as_app_installation(
-			GITHUBAPP_KEY,
-			GITHUBAPP_ID,
-			installation_id,
-			)
+	installation_id = login_as_app_installation(owner=owner, repository=repository_name)
 
-	github_repo: github3.repos.repo.Repository = client.repository(owner, repository_name)
+	github_repo: GitHubRepository = client.repository(owner, repository_name)
 
 	# Ensure 'repo_helper.yml' exists
 	try:
@@ -133,34 +114,16 @@ def update_repository(repository: Dict, recreate: bool = False):
 	with TemporaryDirectory() as tmpdir:
 
 		# Clone to tmpdir
-		process = Popen(["git", "clone", repository["html_url"], tmpdir])
-		process.communicate()
-		process.wait()
-
-		repo = Repo(tmpdir)
+		repo = clone(repository["html_url"], tmpdir)
 
 		if recreate:
 			# Delete any existing branch and create again from master
-			process = Popen(["git", "branch", "--delete", f"{branch_name}"])
-			process.communicate()
-			process.wait()
-
-			# Switch to new branch
-			dulwich.porcelain.update_head(repo, b"HEAD", new_branch=branch_name.encode("UTF-8"))
-			repo.refs[f"refs/heads/{branch_name}".encode("UTF-8")] = repo.refs[b'refs/heads/master']
-
-		elif f"refs/remotes/origin/{branch_name}".encode("UTF-8") in dict(repo.refs):
-			with in_directory(tmpdir):
-				process = Popen(["git", "checkout", "--track", f"origin/{branch_name}"])
-				process.communicate()
-				ret = process.wait()
-				if ret:
-					return ret
-
+			recreate_branch(repo)
+		elif f"refs/remotes/origin/{BRANCH_NAME}".encode("UTF-8") in dict(repo.refs):
+			checkout_branch(repo)
 		else:
 			# Switch to new branch
-			dulwich.porcelain.update_head(repo, b"HEAD", new_branch=branch_name.encode("UTF-8"))
-			repo.refs[f"refs/heads/{branch_name}".encode("UTF-8")] = repo.refs[b'refs/heads/master']
+			create_branch(repo)
 
 		# Update files
 		try:
@@ -170,6 +133,10 @@ def update_repository(repository: Dict, recreate: bool = False):
 			print(f"Unable to run 'repo_helper'.\nThe error was:\n{error_block}")
 
 		managed_files = rh.run()
+
+		if not managed_files and recreate:
+			# Everything is up to date, close PR.
+			close_pr(owner, repository_name, db_repository.get_prs())
 
 		try:
 			if not commit_changed_files(
@@ -194,21 +161,13 @@ def update_repository(repository: Dict, recreate: bool = False):
 			# TODO: if "recreate", close the pull request.
 			return 1
 
-		headers = apps.create_jwt_headers(GITHUBAPP_KEY, GITHUBAPP_ID, expire_in=30)
-		url = github_repo._build_url("app", "installations", str(installation_id), "access_tokens")
-		with github_repo.session.no_auth():
-			response = github_repo.session.post(url, headers=headers)
-			json_response = github_repo._json(response, 201)
-
-			installation_access_token = json_response["token"]
-
 		# Push
 		dulwich.porcelain.push(
 				repo,
 				repository["html_url"],
-				branch_name.encode("UTF-8"),
+				BRANCH_NAME.encode("UTF-8"),
 				username="x-access-token",
-				password=installation_access_token,
+				password=get_installation_access_token(github_repo, installation_id),
 				force=recreate,
 				)
 
@@ -217,7 +176,7 @@ def update_repository(repository: Dict, recreate: bool = False):
 
 		# Create PR
 		base = github_repo.default_branch
-		head = f"{owner}:{branch_name}"
+		head = f"{owner}:{BRANCH_NAME}"
 
 		if not list(github_repo.pull_requests(base=base, head=head)):
 			# TODO: body
@@ -246,3 +205,135 @@ def run_update():
 		return
 
 	return ret
+
+
+def close_pr(
+		owner: str,
+		repository: str,
+		bots_prs: Iterable[int],
+		message="Looks like everything is up to date.",
+		):
+	"""
+	Close the bot's current pull requests, and delete the branch.
+
+	:param owner: The owner of the repository.
+	:param repository: The repository name.
+	:param bots_prs: The numbers of the pull requests deleted by the bot.
+	:param message: The message to close the pull request with.
+	"""
+
+	repo: GitHubRepository = client.repository(owner, repository)
+	pull_request: ShortPullRequest
+
+	for pull_request in repo.pull_requests(state="open"):
+		if pull_request.number in bots_prs:
+			pull_request.create_comment(message)
+			pull_request.close()
+
+	repo.ref(f"heads/{BRANCH_NAME}").delete()
+
+
+def recreate_branch(repo: Union[dulwich.repo.Repo, PathLike]):
+	"""
+	Delete any existing branch and create again from master.
+
+	:param repo:
+	"""
+
+	with dulwich.porcelain.open_repo_closing(repo) as repo:
+		with in_directory(repo.path):
+			process = Popen(["git", "branch", "--delete", f"{BRANCH_NAME}"])
+			process.communicate()
+			process.wait()
+			create_branch(repo)
+
+
+def checkout_branch(repo: Union[dulwich.repo.Repo, PathLike]):
+	"""
+	Checkout an existing branch.
+
+	:param repo:
+	"""
+
+	if isinstance(repo, dulwich.repo.Repo):
+		repo = repo.path
+
+	with in_directory(repo):
+		process = Popen(["git", "checkout", "--track", f"origin/{BRANCH_NAME}"])
+		process.communicate()
+		ret = process.wait()
+		if ret:
+			return ret
+
+
+def create_branch(repo: Union[dulwich.repo.Repo, PathLike]):
+	"""
+	Create and checkout a new branch from master.
+
+	:param repo:
+	"""
+
+	with dulwich.porcelain.open_repo_closing(repo) as repo:
+		dulwich.porcelain.update_head(repo, b"HEAD", new_branch=BRANCH_NAME.encode("UTF-8"))
+		repo.refs[f"refs/heads/{BRANCH_NAME}".encode("UTF-8")] = repo.refs[b'refs/heads/master']
+
+
+def clone(url: str, dest: PathLike) -> Repo:
+	"""
+	Clones the given URL and returns the :class:`southwark.repo.Repo` object representing it.
+
+	:param url:
+	:param dest:
+	"""
+
+	process = Popen(["git", "clone", url, dest])
+	process.communicate()
+	process.wait()
+
+	return Repo(dest)
+
+
+def get_installation_access_token(github_repo: GitHubRepository, installation_id: int):
+	"""
+	Returns the installation access token for the given installation.
+
+	:param github_repo:
+	:param installation_id:
+	"""
+
+	headers = apps.create_jwt_headers(GITHUBAPP_KEY, GITHUBAPP_ID, expire_in=30)
+	url = github_repo._build_url("app", "installations", str(installation_id), "access_tokens")
+	with github_repo.session.no_auth():
+		response = github_repo.session.post(url, headers=headers)
+		json_response = github_repo._json(response, 201)
+
+		return json_response["token"]
+
+
+def get_db_repository(repo_id: int, owner: str, name: str) -> Repository:
+	"""
+	Returns the entry for the given repository in the database, creating it if necessary.
+
+	:param repo_id:
+	:param owner: The owner of the repository.
+	:param name: The name of the repository.
+	"""
+
+	db_repository: Optional[Repository] = Repository.query.get(repo_id)
+	if db_repository is None:
+		db_repository = Repository(
+				id=repo_id,
+				owner=owner,
+				name=name,
+				last_pr=100,
+				pull_requests="[]",
+				)
+		db.session.add(db_repository)
+	else:
+		# Update name of existing repo
+		db_repository.owner = owner
+		db_repository.name = name
+
+	db.session.commit()
+
+	return db_repository

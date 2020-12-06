@@ -47,7 +47,7 @@ else:
 
 github_app = GitHubApp(app)
 
-client = GitHub()
+client: GitHub = GitHub()
 client.login_as_app(GITHUBAPP_KEY, GITHUBAPP_ID)
 
 
@@ -70,6 +70,8 @@ def https_redirect() -> Optional[Response]:
 if "ON_HEROKU" in os.environ:
 	app.before_request(https_redirect)
 
+BRANCH_NAME = "repo-helper-update"
+
 __all__ = [
 		"github_app",
 		"app",
@@ -77,4 +79,5 @@ __all__ = [
 		"GITHUBAPP_ID",
 		"GITHUBAPP_SECRET",
 		"GITHUBAPP_KEY",
+		"BRANCH_NAME",
 		]
