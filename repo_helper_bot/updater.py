@@ -44,6 +44,7 @@ from github3.pulls import ShortPullRequest
 from github3.repos import Repository as GitHubRepository
 from repo_helper.cli.utils import commit_changed_files
 from repo_helper.core import RepoHelper
+from repo_helper.utils import stage_changes
 from southwark.repo import Repo
 
 # this package
@@ -133,8 +134,9 @@ def update_repository(repository: Dict, recreate: bool = False):
 			print(f"Unable to run 'repo_helper'.\nThe error was:\n{error_block}")
 
 		managed_files = rh.run()
+		staged_files = stage_changes(repo.path, managed_files)
 
-		if not managed_files and recreate:
+		if not staged_files and recreate:
 			# Everything is up to date, close PR.
 			close_pr(owner, repository_name, db_repository.get_prs())
 
@@ -226,7 +228,9 @@ def close_pr(
 	pull_request: ShortPullRequest
 
 	for pull_request in repo.pull_requests(state="open"):
+		print(pull_request)
 		if pull_request.number in bots_prs:
+			print(f"Closing PR#{pull_request}")
 			pull_request.create_comment(message)
 			pull_request.close()
 
