@@ -227,7 +227,7 @@ def close_pr(
 		owner: str,
 		repository: str,
 		bots_prs: Iterable[int],
-		message="Looks like everything is up to date.",
+		message="Looks like everything is already up to date.",
 		):
 	"""
 	Close the bot's current pull requests, and delete the branch.
@@ -242,7 +242,6 @@ def close_pr(
 	pull_request: ShortPullRequest
 
 	for pull_request in repo.pull_requests(state="open"):
-		print(pull_request)
 		if pull_request.number in bots_prs:
 			print(f"Closing PR#{pull_request}")
 			pull_request.create_comment(message)
