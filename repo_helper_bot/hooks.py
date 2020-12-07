@@ -24,7 +24,7 @@
 #
 
 # this package
-from repo_helper_bot.constants import github_app
+from repo_helper_bot.constants import BRANCH_NAME, github_app
 from repo_helper_bot.updater import update_repository
 from repo_helper_bot.utils import commit_as_bot, log
 
@@ -102,6 +102,21 @@ def assign_pr():
 
 	if pr.user.login != "domdfcoding":
 		pr.create_review_requests(["domdfcoding"])
+
+
+@github_app.on("pull_request.closed")
+def cleanup_pr():
+	"""
+	Delete the ``repo-helper-update`` branch when the bot's PR is merged.
+	"""
+
+	owner = github_app.payload["repository"]["owner"]["login"]
+	repo = github_app.payload["repository"]["name"]
+
+	if not github_app.payload["pull_request"].get("merged", False):
+		return ''
+
+	github_app.installation_client.repository(owner, repo).ref(f"heads/{BRANCH_NAME}").delete()
 
 
 @github_app.on("issue_comment")
