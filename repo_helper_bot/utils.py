@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 #
 #  utils.py
+"""
+Utility functions.
+"""
 #
 #  Copyright © 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
@@ -59,7 +62,7 @@ def commit_as_bot():
 		os.environ.update(_environ)
 
 
-def log(message: str, type: str = "INFO"):
+def log(message: str, type: str = "INFO"):  # noqa: A002
 	"""
 	Log a message to the terminal.
 
@@ -86,9 +89,19 @@ def make_pr_details():
 # See also https://gist.github.com/pierrejoubert73/902cc94d79424356a8d20be2b382e1ab
 
 login_as_app = partial(client.login_as_app, GITHUBAPP_KEY, GITHUBAPP_ID)
+"""
+Login as the repo-helper app.
+"""
 
 
 def login_as_app_installation(owner: str, repository: str) -> int:
+	"""
+	Login as the repo-helper app.
+
+	:param owner:
+	:param repository:
+	"""
+
 	installation_id = client.app_installation_for_repository(
 			owner=owner,
 			repository=repository,

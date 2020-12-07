@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 #
 #  updater.py
+"""
+Auto update configuration files on push.
+"""
 #
 #  Copyright © 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
@@ -83,6 +86,13 @@ def iter_installed_repos() -> Iterator[Dict]:
 
 
 def update_repository(repository: Dict, recreate: bool = False):
+	"""
+	Run the updater for the given repository.
+
+	:param repository:
+	:param recreate:
+	"""
+
 	# TODO: rebase
 	# TODO: if branch already exists and PR has been merged, abort
 
@@ -200,6 +210,10 @@ def update_repository(repository: Dict, recreate: bool = False):
 
 
 def run_update():
+	"""
+	Run the updater.
+	"""
+
 	ret = 0
 
 	for repository in iter_installed_repos():

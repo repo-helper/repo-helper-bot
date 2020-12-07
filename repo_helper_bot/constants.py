@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 #
 #  constants.py
+"""
+Configuration constants.
+"""
 #
 #  Copyright © 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
@@ -52,13 +55,9 @@ client.login_as_app(GITHUBAPP_KEY, GITHUBAPP_ID)
 
 
 def https_redirect() -> Optional[Response]:
-	"""
-	Based on https://stackoverflow.com/a/59771351
-
-	By Maximilian Burszley <https://stackoverflow.com/users/8188846/maximilian-burszley>
-
-	CC BY-SA 4.0
-	"""
+	# Based on https://stackoverflow.com/a/59771351
+	# By Maximilian Burszley <https://stackoverflow.com/users/8188846/maximilian-burszley>
+	# CC BY-SA 4.0
 
 	if request.scheme == "http":
 		return redirect(

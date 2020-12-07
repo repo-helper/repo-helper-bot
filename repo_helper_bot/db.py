@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 #
 #  db.py
+"""
+Database connection.
+"""
 #
 #  Copyright © 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
@@ -26,6 +29,7 @@
 # stdlib
 import json
 import os
+from typing import List
 
 # 3rd party
 from domdf_python_tools.paths import PathPlus
@@ -47,7 +51,11 @@ db = SQLAlchemy(app)
 
 
 class Repository(db.Model):
-	id = db.Column(db.INTEGER, primary_key=True)
+	"""
+	Stores information about a GitHub Repository.
+	"""
+
+	id = db.Column(db.INTEGER, primary_key=True)  # noqa: A003
 	owner = db.Column(db.String(128))
 	name = db.Column(db.String(128))
 	last_pr = db.Column(db.FLOAT)
@@ -56,15 +64,29 @@ class Repository(db.Model):
 
 	@property
 	def fullname(self) -> str:
+		"""
+		The full name of the repository (``owner/name``).
+		"""
+
 		return f"{self.owner}/{self.name}"
 
 	def __repr__(self):
 		return f'<Repository {self.fullname!r}>'
 
 	def add_pr(self, number: int):
+		"""
+		Add a pull request number to the list of previous PRs for this repository.
+
+		:param number:
+		"""
+
 		current_prs = json.loads(self.pull_requests)
 		current_prs.insert(0, number)
 		self.pull_requests = json.dumps(current_prs[:10])
 
-	def get_prs(self):
+	def get_prs(self) -> List[int]:
+		"""
+		Returns a list of previous pull requests for this repository.
+		"""
+
 		return json.loads(self.pull_requests)

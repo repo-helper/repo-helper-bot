@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 #
 #  routes.py
+"""
+HTTP routes.
+"""
 #
 #  Copyright © 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
@@ -31,4 +34,8 @@ __all__ = ["home"]
 
 @app.route('/')
 def home():
+	"""
+	Route for the homepage.
+	"""
+
 	return "This is repo-helper-bot, running on Heroku."

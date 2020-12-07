@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 #
 #  hooks.py
+"""
+Functions to handle GitHub webhooks.
+"""
 #
 #  Copyright © 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
