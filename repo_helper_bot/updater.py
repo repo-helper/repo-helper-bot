@@ -53,7 +53,7 @@ from southwark.repo import Repo
 # this package
 from repo_helper_bot.constants import BRANCH_NAME, GITHUBAPP_ID, GITHUBAPP_KEY, client
 from repo_helper_bot.db import Repository, db
-from repo_helper_bot.utils import login_as_app, login_as_app_installation
+from repo_helper_bot.utils import login_as_app, login_as_app_installation, make_pr_details
 
 __all__ = ["iter_installed_repos", "run_update", "update_repository"]
 
@@ -197,6 +197,7 @@ def update_repository(repository: Dict, recreate: bool = False):
 					title="[repo-helper] Configuration Update",
 					base=base,
 					head=head,
+					body=make_pr_details(),
 					)
 
 			if created_pr is not None:

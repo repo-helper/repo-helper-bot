@@ -29,14 +29,16 @@ Utility functions.
 # stdlib
 import os
 from contextlib import contextmanager
-from datetime import datetime
+from datetime import date, datetime
 from functools import partial
-from textwrap import dedent
+
+# 3rd party
+from domdf_python_tools.stringlist import StringList
 
 # this package
 from repo_helper_bot.constants import GITHUBAPP_ID, GITHUBAPP_KEY, client
 
-__all__ = ["commit_as_bot", "log", "login_as_app", "login_as_app_installation"]
+__all__ = ["commit_as_bot", "log", "login_as_app", "login_as_app_installation", "make_pr_details"]
 
 
 @contextmanager
@@ -73,17 +75,46 @@ def log(message: str, type: str = "INFO"):  # noqa: A002
 	print(f"[{datetime.now():%Y-%m-%d %H:%M:%S%z}] [{type}] {message}")
 
 
-def make_pr_details():
-	return dedent(
-			"""\
-	<details>
-		<summary>Commands</summary>
+# TODO: Add octocheese-style links in footer
 
-		* `@repo-helper recreate` will recreate the pull request by checking
-		  out the current master branch and running `repo-helper` on that.
-	</details>
-	"""
-			)
+#: Under normal circumstances returns :meth:`datetime.date.today`.
+TODAY: date = date.today()
+
+
+def make_pr_details():
+	buf = StringList()
+	buf.extend([
+			"<details>",
+			"  <summary>Commands</summary>",
+			'',
+			"  * `@repo-helper recreate` will recreate the pull request by checking"
+			" out the current master branch and running `repo-helper` on that.",
+			"</details>",
+			])
+
+	buf.blankline(ensure_single=True)
+
+	buf.append("---")
+	buf.blankline(ensure_single=True)
+
+	if TODAY.month == 12:
+		buf.append(
+				" | ".join((
+						"[☃️ repo](https://github.com/repo-helper/repo-helper-bot)",
+						"[🎅 issues](https://github.com/repo-helper/repo-helper-bot/issues)",
+						"[🎁 marketplace](https://github.com/apps/repo-helper)",
+						))
+				)
+	else:
+		buf.append(
+				" | ".join((
+						"[:octocat: repo](https://github.com/repo-helper/repo-helper-bot)",
+						"[🙋 issues](https://github.com/repo-helper/repo-helper-bot/issues)",
+						"[🏪 marketplace](https://github.com/apps/repo-helper)",
+						))
+				)
+
+	return str(buf)
 
 
 # See also https://gist.github.com/pierrejoubert73/902cc94d79424356a8d20be2b382e1ab
