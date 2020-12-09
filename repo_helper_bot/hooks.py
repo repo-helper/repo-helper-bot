@@ -142,7 +142,8 @@ def on_issue_comment():
 
 		print(comment["body"])
 
-		if comment["author_association"] in {"OWNER", "COLLABORATOR", "MEMBER"}:
+		#: TODO: org members show as "CONTRIBUTOR"
+		if comment["author_association"] in {"OWNER", "COLLABORATOR", "CONTRIBUTOR", "MEMBER"}:
 			if "@repo-helper recreate" in comment["body"]:
 
 				with commit_as_bot():
