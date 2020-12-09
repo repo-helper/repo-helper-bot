@@ -100,7 +100,7 @@ def update_repository(repository: Dict, recreate: bool = False):
 			repo_id=repository["id"], owner=repository["owner"]["login"], name=repository["name"]
 			)
 
-	if datetime.fromtimestamp(db_repository.last_pr).day == datetime.now():
+	if datetime.fromtimestamp(db_repository.last_pr).day == datetime.now().day:
 		print(f"A PR for {db_repository.fullname} has already been created today. Skipping.")
 		return 1
 
