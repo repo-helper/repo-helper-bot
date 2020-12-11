@@ -64,7 +64,7 @@ def commit_as_bot():
 		os.environ.update(_environ)
 
 
-def log(message: str, type: str = "INFO"):  # noqa: A002
+def log(message: str, type: str = "INFO"):  # noqa: A002  # pylint: disable=redefined-builtin
 	"""
 	Log a message to the terminal.
 

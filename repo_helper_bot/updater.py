@@ -257,7 +257,7 @@ def recreate_branch(repo: Union[dulwich.repo.Repo, PathLike]):
 	:param repo:
 	"""
 
-	with dulwich.porcelain.open_repo_closing(repo) as repo:
+	with dulwich.porcelain.open_repo_closing(repo) as repo:  # pylint: disable=redefined-argument-from-local
 		with in_directory(repo.path):
 			process = Popen(["git", "branch", "--delete", f"{BRANCH_NAME}"])
 			process.communicate()
@@ -290,7 +290,7 @@ def create_branch(repo: Union[dulwich.repo.Repo, PathLike]):
 	:param repo:
 	"""
 
-	with dulwich.porcelain.open_repo_closing(repo) as repo:
+	with dulwich.porcelain.open_repo_closing(repo) as repo:  # pylint: disable=redefined-argument-from-local
 		dulwich.porcelain.update_head(repo, b"HEAD", new_branch=BRANCH_NAME.encode("UTF-8"))
 		repo.refs[f"refs/heads/{BRANCH_NAME}".encode("UTF-8")] = repo.refs[b'refs/heads/master']
 
