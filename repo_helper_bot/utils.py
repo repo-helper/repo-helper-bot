@@ -75,8 +75,6 @@ def log(message: str, type: str = "INFO"):  # noqa: A002
 	print(f"[{datetime.now():%Y-%m-%d %H:%M:%S%z}] [{type}] {message}")
 
 
-# TODO: Add octocheese-style links in footer
-
 #: Under normal circumstances returns :meth:`datetime.date.today`.
 TODAY: date = date.today()
 

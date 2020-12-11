@@ -172,7 +172,6 @@ def update_repository(repository: Dict, recreate: bool = False):
 			indented_error = '\n'.join(f"\t{line}" for line in wrap(str(e)))
 			print(f"Unable to commit changes. The error was:\n\n{indented_error}")
 			print("Failure!")
-			# TODO: if "recreate", close the pull request.
 			return 1
 
 		# Push
@@ -193,8 +192,6 @@ def update_repository(repository: Dict, recreate: bool = False):
 		head = f"{owner}:{BRANCH_NAME}"
 
 		if not list(github_repo.pull_requests(base=base, head=head)):
-			# TODO: body
-
 			created_pr = github_repo.create_pull(
 					title="[repo-helper] Configuration Update",
 					base=base,

@@ -56,9 +56,7 @@ def on_push():
 		log(f"Push is a merge of a PR. Skipping.")
 		return ''
 
-	# TODO: detect pushes that are merged PRs the bot opened
 	if pusher not in {"repo-helper", "repo-helper[bot]"}:
-
 		with commit_as_bot():
 			update_repository(github_app.payload["repository"])
 
