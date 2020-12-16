@@ -24,15 +24,15 @@ repo_helper_bot
 	* - Other
 	  - |license| |language| |requires| |pre_commit|
 
-.. |actions_linux| image:: https://github.com/domdfcoding/repo_helper_bot/workflows/Linux%20Tests/badge.svg
+.. |actions_linux| image:: https://github.com/domdfcoding/repo_helper_bot/workflows/Linux/badge.svg
 	:target: https://github.com/domdfcoding/repo_helper_bot/actions?query=workflow%3A%22Linux%22
 	:alt: Linux Test Status
 
-.. |actions_windows| image:: https://github.com/domdfcoding/repo_helper_bot/workflows/Windows%20Tests/badge.svg
+.. |actions_windows| image:: https://github.com/domdfcoding/repo_helper_bot/workflows/Windows/badge.svg
 	:target: https://github.com/domdfcoding/repo_helper_bot/actions?query=workflow%3A%22Windows%22
 	:alt: Windows Test Status
 
-.. |actions_macos| image:: https://github.com/domdfcoding/repo_helper_bot/workflows/macOS%20Tests/badge.svg
+.. |actions_macos| image:: https://github.com/domdfcoding/repo_helper_bot/workflows/macOS/badge.svg
 	:target: https://github.com/domdfcoding/repo_helper_bot/actions?query=workflow%3A%22macOS%22
 	:alt: macOS Test Status
 
