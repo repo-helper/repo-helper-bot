@@ -69,20 +69,36 @@ def iter_installed_repos() -> Iterator[Dict]:
 		# print(installation.account)
 		username = installation.account["login"]
 
+		login_as_app()
+
 		# Log in as installation for this user
 		installation_id = client.app_installation_for_user(username).id
 		client.login_as_app_installation(GITHUBAPP_KEY, GITHUBAPP_ID, installation_id)
 
 		# Get repositories for this user.
-		user_repositories = client.session.get(
-				installation.repositories_url,
-				headers={
-						**installation.session.headers,
-						"Accept": "application/vnd.github.machine-man-preview+json"
-						}
-				).json()["repositories"]
 
-		yield from user_repositories
+		def get_page(page: int = 1):
+			return client.session.get(
+					installation.repositories_url,
+					params={"per_page": 100, "page": page},
+					headers={
+							**installation.session.headers,
+							"Accept": "application/vnd.github.machine-man-preview+json"
+							}
+					).json()
+
+		response = get_page()
+		total_repos = response["total_count"]
+		yield from response["repositories"]
+
+		total_repos -= len(response["repositories"])
+		page = 2
+
+		while total_repos > 0:
+			response = get_page(page)
+			page += 1
+			yield from response["repositories"]
+			total_repos -= len(response["repositories"])
 
 
 def update_repository(repository: Dict, recreate: bool = False):
@@ -217,8 +233,8 @@ def run_update():
 	ret = 0
 
 	for repository in iter_installed_repos():
+		print(repository["full_name"])
 		ret |= update_repository(repository)
-		return
 
 	return ret
 
