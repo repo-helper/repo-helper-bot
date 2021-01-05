@@ -116,6 +116,8 @@ def cleanup_pr():
 
 	if not github_app.payload["pull_request"].get("merged", False):
 		return ''
+	if github_app.payload["issue"]["user"]["login"] != "repo-heper[bot]":
+		return ''
 
 	github_app.installation_client.repository(owner, repo).ref(f"heads/{BRANCH_NAME}").delete()
 
