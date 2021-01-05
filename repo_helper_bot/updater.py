@@ -262,8 +262,8 @@ def close_pr(
 			print(f"Closing PR#{pull_request}")
 			pull_request.create_comment(message)
 			# pull_request.close()  # TODO: the bot seems to be closing without comment
-
-	repo.ref(f"heads/{BRANCH_NAME}").delete()
+			# repo.ref(f"heads/{BRANCH_NAME}").delete()
+			break
 
 
 def recreate_branch(repo: Union[dulwich.repo.Repo, PathLike]):
