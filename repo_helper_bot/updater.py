@@ -261,8 +261,8 @@ def close_pr(
 		if pull_request.number in bots_prs:
 			print(f"Closing PR#{pull_request}")
 			pull_request.create_comment(message)
-			# pull_request.close()  # TODO: the bot seems to be closing without comment
-			# repo.ref(f"heads/{BRANCH_NAME}").delete()
+			pull_request.close()  # TODO: the bot seems to be closing without comment
+			repo.ref(f"heads/{BRANCH_NAME}").delete()
 			break
 
 
