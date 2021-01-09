@@ -83,7 +83,8 @@ def iter_installed_repos() -> Iterator[Dict]:
 					params={"per_page": 100, "page": page},
 					headers={
 							**installation.session.headers,
-							"Accept": "application/vnd.github.machine-man-preview+json"
+							"Accept":
+									"application/vnd.github.machine-man-preview+json"
 							}
 					).json()
 
