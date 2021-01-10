@@ -5,7 +5,7 @@
 Configuration constants.
 """
 #
-#  Copyright © 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
+#  Copyright © 2020-2021 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
@@ -29,12 +29,17 @@ Configuration constants.
 # stdlib
 import os
 from http import HTTPStatus
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 # 3rd party
-from flask import Flask, Response, redirect, request, url_for
-from flask_githubapp import GitHubApp
-from github3 import GitHub
+from flask import Flask, redirect, request, url_for
+from flask_githubapp import GitHubApp  # type: ignore
+from github3 import GitHub  # type: ignore
+from github3_utils.apps import ContextSwitcher
+
+if TYPE_CHECKING:
+	# 3rd party
+	from werkzeug.wrappers import Response
 
 app = Flask(__name__)
 
@@ -51,19 +56,31 @@ else:
 github_app = GitHubApp(app)
 
 client: GitHub = GitHub()
-client.login_as_app(GITHUBAPP_KEY, GITHUBAPP_ID)
+
+context_switcher = ContextSwitcher(
+		client=client,
+		private_key_pem=GITHUBAPP_KEY,
+		app_id=GITHUBAPP_ID,
+		)
+
+context_switcher.login_as_app()
 
 
-def https_redirect() -> Optional[Response]:
+def https_redirect() -> Optional["Response"]:
 	# Based on https://stackoverflow.com/a/59771351
 	# By Maximilian Burszley <https://stackoverflow.com/users/8188846/maximilian-burszley>
 	# CC BY-SA 4.0
 
-	if request.scheme == "http":
-		return redirect(
-				url_for(request.endpoint, _scheme="https", _external=True),
-				HTTPStatus.PERMANENT_REDIRECT,
-				)
+	if not request.endpoint:
+		return None
+
+	if request.scheme != "http":
+		return None
+
+	return redirect(
+			url_for(request.endpoint, _scheme="https", _external=True),
+			HTTPStatus.PERMANENT_REDIRECT,
+			)
 
 
 if "ON_HEROKU" in os.environ:
@@ -79,4 +96,5 @@ __all__ = [
 		"GITHUBAPP_SECRET",
 		"GITHUBAPP_KEY",
 		"BRANCH_NAME",
+		"context_switcher",
 		]

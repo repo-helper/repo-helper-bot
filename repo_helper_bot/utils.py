@@ -35,10 +35,7 @@ from functools import partial
 # 3rd party
 from domdf_python_tools.stringlist import StringList
 
-# this package
-from repo_helper_bot.constants import GITHUBAPP_ID, GITHUBAPP_KEY, client
-
-__all__ = ["commit_as_bot", "log", "login_as_app", "login_as_app_installation", "make_pr_details"]
+__all__ = ["commit_as_bot", "log", "make_pr_details"]
 
 
 @contextmanager
@@ -116,29 +113,3 @@ def make_pr_details():
 
 
 # See also https://gist.github.com/pierrejoubert73/902cc94d79424356a8d20be2b382e1ab
-
-login_as_app = partial(client.login_as_app, GITHUBAPP_KEY, GITHUBAPP_ID)
-"""
-Login as the repo-helper app.
-"""
-
-
-def login_as_app_installation(owner: str, repository: str) -> int:
-	"""
-	Login as the repo-helper app.
-
-	:param owner:
-	:param repository:
-	"""
-
-	installation_id = client.app_installation_for_repository(
-			owner=owner,
-			repository=repository,
-			).id
-	client.login_as_app_installation(
-			GITHUBAPP_KEY,
-			GITHUBAPP_ID,
-			installation_id,
-			)
-
-	return installation_id

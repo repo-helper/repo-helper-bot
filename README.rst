@@ -20,7 +20,7 @@ repo_helper_bot
 	* - Tests
 	  - |actions_linux| |actions_windows| |actions_macos|
 	* - Activity
-	  - |commits-latest| |commits-since| |maintained| |pypi-downloads|
+	  - |commits-latest| |commits-since| |maintained|
 	* - QA
 	  - |codefactor| |actions_flake8| |actions_mypy| |pre_commit_ci|
 	* - Other
@@ -69,12 +69,8 @@ repo_helper_bot
 	:target: https://github.com/domdfcoding/repo_helper_bot/commit/master
 	:alt: GitHub last commit
 
-.. |maintained| image:: https://img.shields.io/maintenance/yes/2020
+.. |maintained| image:: https://img.shields.io/maintenance/yes/2021
 	:alt: Maintenance
-
-.. |pypi-downloads| image:: https://img.shields.io/pypi/dm/repo_helper_bot
-	:target: https://pypi.org/project/repo_helper_bot/
-	:alt: PyPI - Downloads
 
 .. |pre_commit_ci| image:: https://results.pre-commit.ci/badge/github/domdfcoding/repo_helper_bot/master.svg
 	:target: https://results.pre-commit.ci/latest/github/domdfcoding/repo_helper_bot/master

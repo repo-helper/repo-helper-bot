@@ -33,7 +33,7 @@ from typing import List
 
 # 3rd party
 from domdf_python_tools.paths import PathPlus
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy  # type: ignore
 
 # this package
 from repo_helper_bot.constants import app

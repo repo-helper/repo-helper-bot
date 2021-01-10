@@ -29,5 +29,13 @@ __copyright__ = """
 __version__ = "0.0.0"
 
 repo_root = pathlib.Path(__file__).parent
-install_requires = (repo_root / "requirements.txt").read_text(encoding="utf-8").split('\n')
 extras_require = {"all": []}
+
+
+install_requires = []
+
+for line in (repo_root / "requirements.txt").read_text(encoding="utf-8").split('\n'):
+	if line.startswith("git+https://github.com/domdfcoding/repo_helper@"):
+		install_requires.append("repo-helper")
+	else:
+		install_requires.append(line)

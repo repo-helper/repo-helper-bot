@@ -40,65 +40,23 @@ import dulwich.repo
 from domdf_python_tools.paths import in_directory
 from domdf_python_tools.typing import PathLike
 from dulwich.errors import CommitError
-from github3 import apps
-from github3.apps import Installation
-from github3.exceptions import NotFoundError
-from github3.pulls import ShortPullRequest
-from github3.repos import Repository as GitHubRepository
+from github3 import apps  # type: ignore
+from github3.exceptions import NotFoundError  # type: ignore
+from github3.pulls import ShortPullRequest  # type: ignore
+from github3.repos import Repository as GitHubRepository  # type: ignore
+from github3_utils.apps import iter_installed_repos
 from repo_helper.cli.utils import commit_changed_files
 from repo_helper.core import RepoHelper
 from repo_helper.utils import stage_changes
+from southwark import open_repo_closing
 from southwark.repo import Repo
 
 # this package
-from repo_helper_bot.constants import BRANCH_NAME, GITHUBAPP_ID, GITHUBAPP_KEY, client
+from repo_helper_bot.constants import BRANCH_NAME, GITHUBAPP_ID, GITHUBAPP_KEY, client, context_switcher
 from repo_helper_bot.db import Repository, db
-from repo_helper_bot.utils import login_as_app, login_as_app_installation, make_pr_details
+from repo_helper_bot.utils import make_pr_details
 
-__all__ = ["iter_installed_repos", "run_update", "update_repository"]
-
-
-def iter_installed_repos() -> Iterator[Dict]:
-	"""
-	Returns an iterator over all repositories repo-helper is installed for.
-	"""
-
-	installation: Installation
-	for installation in client.app_installations(GITHUBAPP_ID):
-		# print(installation)
-		# print(installation.account)
-		username = installation.account["login"]
-
-		login_as_app()
-
-		# Log in as installation for this user
-		installation_id = client.app_installation_for_user(username).id
-		client.login_as_app_installation(GITHUBAPP_KEY, GITHUBAPP_ID, installation_id)
-
-		# Get repositories for this user.
-
-		def get_page(page: int = 1):
-			return client.session.get(
-					installation.repositories_url,
-					params={"per_page": 100, "page": page},
-					headers={
-							**installation.session.headers,
-							"Accept": "application/vnd.github.machine-man-preview+json"
-							}
-					).json()
-
-		response = get_page()
-		total_repos = response["total_count"]
-		yield from response["repositories"]
-
-		total_repos -= len(response["repositories"])
-		page = 2
-
-		while total_repos > 0:
-			response = get_page(page)
-			page += 1
-			yield from response["repositories"]
-			total_repos -= len(response["repositories"])
+__all__ = ["run_update", "update_repository"]
 
 
 def update_repository(repository: Dict, recreate: bool = False):
@@ -113,7 +71,9 @@ def update_repository(repository: Dict, recreate: bool = False):
 	# TODO: if branch already exists and PR has been merged, abort
 
 	db_repository: Repository = get_db_repository(
-			repo_id=repository["id"], owner=repository["owner"]["login"], name=repository["name"]
+			repo_id=repository["id"],
+			owner=repository["owner"]["login"],
+			name=repository["name"],
 			)
 
 	last_pr_date = datetime.fromtimestamp(db_repository.last_pr)
@@ -126,10 +86,10 @@ def update_repository(repository: Dict, recreate: bool = False):
 	repository_name = repository["name"]
 
 	# Log in as the app
-	login_as_app()
+	context_switcher.login_as_app()
 
 	# Log in as installation
-	installation_id = login_as_app_installation(owner=owner, repository=repository_name)
+	installation_id = context_switcher.login_as_repo_installation(owner=owner, repository=repository_name)
 
 	github_repo: GitHubRepository = client.repository(owner, repository_name)
 
@@ -232,7 +192,7 @@ def run_update():
 
 	ret = 0
 
-	for repository in iter_installed_repos():
+	for repository in iter_installed_repos(context_switcher=context_switcher):
 		print(repository["full_name"])
 		ret |= update_repository(repository)
 
@@ -273,7 +233,7 @@ def recreate_branch(repo: Union[dulwich.repo.Repo, PathLike]):
 	:param repo:
 	"""
 
-	with dulwich.porcelain.open_repo_closing(repo) as repo:  # pylint: disable=redefined-argument-from-local
+	with open_repo_closing(repo) as repo:  # pylint: disable=redefined-argument-from-local
 		with in_directory(repo.path):
 			process = Popen(["git", "branch", "--delete", f"{BRANCH_NAME}"])
 			process.communicate()
@@ -281,7 +241,7 @@ def recreate_branch(repo: Union[dulwich.repo.Repo, PathLike]):
 			create_branch(repo)
 
 
-def checkout_branch(repo: Union[dulwich.repo.Repo, PathLike]):
+def checkout_branch(repo: Union[dulwich.repo.Repo, PathLike]) -> int:
 	"""
 	Checkout an existing branch.
 
@@ -289,14 +249,14 @@ def checkout_branch(repo: Union[dulwich.repo.Repo, PathLike]):
 	"""
 
 	if isinstance(repo, dulwich.repo.Repo):
-		repo = repo.path
+		directory = repo.path
+	else:
+		directory = repo
 
-	with in_directory(repo):
+	with in_directory(directory):
 		process = Popen(["git", "checkout", "--track", f"origin/{BRANCH_NAME}"])
 		process.communicate()
-		ret = process.wait()
-		if ret:
-			return ret
+		return process.wait()
 
 
 def create_branch(repo: Union[dulwich.repo.Repo, PathLike]):
@@ -306,7 +266,7 @@ def create_branch(repo: Union[dulwich.repo.Repo, PathLike]):
 	:param repo:
 	"""
 
-	with dulwich.porcelain.open_repo_closing(repo) as repo:  # pylint: disable=redefined-argument-from-local
+	with open_repo_closing(repo) as repo:  # pylint: disable=redefined-argument-from-local
 		dulwich.porcelain.update_head(repo, b"HEAD", new_branch=BRANCH_NAME.encode("UTF-8"))
 		repo.refs[f"refs/heads/{BRANCH_NAME}".encode("UTF-8")] = repo.refs[b'refs/heads/master']
 

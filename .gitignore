@@ -90,6 +90,6 @@ secrets.py
 updater.py
 run.sh
 *.pem
-*.sqlite
+*.sqlite*
 db_create.py
 automerge.py
