@@ -1,4 +1,4 @@
-git+https://github.com/domdfcoding/repo_helper@dddf3af330c6c67be9346a8b9ad568ba949f34f5
+git+https://github.com/domdfcoding/repo_helper@0c489cc943219718b5371b42ea578aded84c2edd
 domdf-python-tools>=1.8.0
 dulwich>=0.20.14
 flask>=1.1.2
