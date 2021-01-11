@@ -32,7 +32,7 @@ from datetime import datetime
 from subprocess import Popen
 from tempfile import TemporaryDirectory
 from textwrap import indent, wrap
-from typing import Dict, Iterable, Iterator, Optional, Union
+from typing import Dict, Iterable, Optional, Union
 
 # 3rd party
 import dulwich.porcelain
