@@ -33,7 +33,7 @@ from typing import List
 
 # 3rd party
 from domdf_python_tools.paths import PathPlus
-from flask_sqlalchemy import SQLAlchemy  # type: ignore
+from flask_sqlalchemy import SQLAlchemy
 
 # this package
 from repo_helper_bot.constants import app
@@ -50,7 +50,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
 
-class Repository(db.Model):
+class Repository(db.Model):  # type: ignore
 	"""
 	Stores information about a GitHub Repository.
 	"""
@@ -80,7 +80,7 @@ class Repository(db.Model):
 		:param number:
 		"""
 
-		current_prs = json.loads(self.pull_requests)
+		current_prs = json.loads(self.pull_requests or "[]")
 		current_prs.insert(0, number)
 		self.pull_requests = json.dumps(current_prs[:10])
 
@@ -89,4 +89,4 @@ class Repository(db.Model):
 		Returns a list of previous pull requests for this repository.
 		"""
 
-		return json.loads(self.pull_requests)
+		return json.loads(self.pull_requests or "[]")
