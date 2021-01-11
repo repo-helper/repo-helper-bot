@@ -55,7 +55,7 @@ class Repository(db.Model):  # type: ignore
 	Stores information about a GitHub Repository.
 	"""
 
-	id = db.Column(db.INTEGER, primary_key=True)  # noqa: A003
+	id = db.Column(db.INTEGER, primary_key=True)  # noqa: A003  # pylint: disable=redefined-builtin
 	owner = db.Column(db.String(128))
 	name = db.Column(db.String(128))
 	last_pr = db.Column(db.FLOAT)

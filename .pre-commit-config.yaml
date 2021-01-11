@@ -1,7 +1,7 @@
 # This file is managed by 'repo_helper'. Don't edit it directly.
 ---
 
-exclude: ^$
+exclude: ^requirements.txt$
 
 repos:
  - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -35,10 +35,15 @@ repos:
     - id: bind-requirements
 
  - repo: https://github.com/domdfcoding/flake8-dunder-all
-   rev: v0.1.5
+   rev: v0.1.4
    hooks:
     - id: ensure-dunder-all
       files: ^repo_helper_bot/.*\.py$
+
+ - repo: https://github.com/domdfcoding/flake2lint
+   rev: v0.1.0
+   hooks:
+    - id: flake2lint
 
  - repo: https://github.com/pre-commit/pygrep-hooks
    rev: v1.7.0

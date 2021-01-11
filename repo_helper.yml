@@ -36,3 +36,5 @@ exclude_files:
 mypy_plugins:
  - sqlmypy
  - flasksqlamypy
+
+pre_commit_exclude: "^requirements.txt$"
