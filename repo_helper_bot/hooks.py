@@ -116,7 +116,9 @@ def cleanup_pr():
 
 	if not github_app.payload["pull_request"].get("merged", False):
 		return ''
-	if github_app.payload["issue"]["user"]["login"] != "repo-helper[bot]":
+	if not github_app.payload["pull_request"]["user"]["login"].startswith("repo-helper"):
+		return ''
+	if github_app.payload["pull_request"]["title"] != "[repo-helper] Configuration Update":
 		return ''
 
 	github_app.installation_client.repository(owner, repo).ref(f"heads/{BRANCH_NAME}").delete()
