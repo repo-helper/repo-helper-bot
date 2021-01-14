@@ -26,6 +26,9 @@ Functions to handle GitHub webhooks.
 #  OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+# stdlib
+import re
+
 # this package
 from repo_helper_bot.constants import BRANCH_NAME, github_app
 from repo_helper_bot.updater import update_repository
@@ -105,6 +108,9 @@ def assign_pr():
 		pr.create_review_requests(["domdfcoding"])
 
 
+branch_delete_pr_regex = re.compile(r"^(\[pre-commit\.ci]|\[repo-helper])")
+
+
 @github_app.on("pull_request.closed")
 def cleanup_pr():
 	"""
@@ -118,7 +124,7 @@ def cleanup_pr():
 		return ''
 	if not github_app.payload["pull_request"]["user"]["login"].startswith("repo-helper"):
 		return ''
-	if github_app.payload["pull_request"]["title"] != "[repo-helper] Configuration Update":
+	if not branch_delete_pr_regex.match(github_app.payload["pull_request"]["title"]):
 		return ''
 
 	github_app.installation_client.repository(owner, repo).ref(f"heads/{BRANCH_NAME}").delete()
