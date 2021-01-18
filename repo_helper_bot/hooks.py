@@ -108,9 +108,6 @@ def assign_pr():
 		pr.create_review_requests(["domdfcoding"])
 
 
-branch_delete_pr_regex = re.compile(r"^(\[pre-commit\.ci]|\[repo-helper])")
-
-
 @github_app.on("pull_request.closed")
 def cleanup_pr():
 	"""
@@ -122,12 +119,15 @@ def cleanup_pr():
 
 	if not github_app.payload["pull_request"].get("merged", False):
 		return ''
-	if not github_app.payload["pull_request"]["user"]["login"].startswith("repo-helper"):
-		return ''
-	if not branch_delete_pr_regex.match(github_app.payload["pull_request"]["title"]):
-		return ''
 
-	github_app.installation_client.repository(owner, repo).ref(f"heads/{BRANCH_NAME}").delete()
+	if github_app.payload["pull_request"]["user"]["login"].startswith("repo-helper"):
+		if github_app.payload["pull_request"]["title"].startswith("[repo-helper]"):
+			github_app.installation_client.repository(owner, repo).ref(f"heads/{BRANCH_NAME}").delete()
+
+	elif github_app.payload["pull_request"]["user"]["login"].startswith("pre-commit"):
+		if github_app.payload["pull_request"]["title"].startswith("[pre-commit.ci]"):
+			github_app.installation_client.repository(owner,
+														repo).ref("heads/ pre-commit-ci-update-config").delete()
 
 
 @github_app.on("issue_comment")
