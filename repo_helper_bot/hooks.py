@@ -26,8 +26,11 @@ Functions to handle GitHub webhooks.
 #  OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-# stdlib
-import re
+# 3rd party
+from github3.issues import Issue
+from github3.pulls import PullRequest
+from github3.repos import Repository
+from github3_utils.check_labels import label_pr_failures
 
 # this package
 from repo_helper_bot.constants import BRANCH_NAME, github_app
@@ -126,8 +129,8 @@ def cleanup_pr():
 
 	elif github_app.payload["pull_request"]["user"]["login"].startswith("pre-commit"):
 		if github_app.payload["pull_request"]["title"].startswith("[pre-commit.ci]"):
-			github_app.installation_client.repository(owner,
-														repo).ref("heads/ pre-commit-ci-update-config").delete()
+			repo_obj = github_app.installation_client.repository(owner, repo)
+			repo_obj.ref("heads/ pre-commit-ci-update-config").delete()
 
 
 @github_app.on("issue_comment")
@@ -156,5 +159,25 @@ def on_issue_comment():
 
 				with commit_as_bot():
 					update_repository(github_app.payload["repository"], recreate=True)
+
+	return ''
+
+
+@github_app.on("check_run.completed")
+def on_check_run_completed():
+	"""
+	Hook to respond to the completion of check runs.
+	"""
+
+	repo_name = github_app.payload["repository"]["full_name"]
+	repo: Repository = github_app.installation_client.repository(*repo_name.split('/'))
+	head_branch = github_app.payload["check_run"]["check_suite"]["head_branch"]
+
+	print(f"New check status for repository {repo_name}:")
+
+	pr: PullRequest
+	issue: Issue
+	for pr in repo.pull_requests(state="open", head=head_branch):
+		label_pr_failures(pr)
 
 	return ''
