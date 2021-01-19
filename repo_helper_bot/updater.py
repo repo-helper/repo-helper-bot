@@ -40,10 +40,10 @@ import dulwich.repo
 from domdf_python_tools.paths import in_directory
 from domdf_python_tools.typing import PathLike
 from dulwich.errors import CommitError
-from github3 import apps  # type: ignore
-from github3.exceptions import NotFoundError  # type: ignore
-from github3.pulls import ShortPullRequest  # type: ignore
-from github3.repos import Repository as GitHubRepository  # type: ignore
+from github3 import apps
+from github3.exceptions import NotFoundError
+from github3.pulls import ShortPullRequest
+from github3.repos import Repository as GitHubRepository
 from github3_utils.apps import iter_installed_repos
 from repo_helper.cli.utils import commit_changed_files  # nodep
 from repo_helper.core import RepoHelper  # nodep

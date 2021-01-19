@@ -58,7 +58,7 @@ class Repository(db.Model):  # type: ignore
 	id = db.Column(db.INTEGER, primary_key=True)  # noqa: A003  # pylint: disable=redefined-builtin
 	owner = db.Column(db.String(128))
 	name = db.Column(db.String(128))
-	last_pr = db.Column(db.FLOAT)
+	last_pr: float = db.Column(db.FLOAT)  # type: ignore
 	# pull_requests = db.Column(PreviousPullRequests(256))
 	pull_requests = db.Column(db.String(128))
 

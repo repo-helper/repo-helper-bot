@@ -34,7 +34,7 @@ from typing import TYPE_CHECKING, Optional
 # 3rd party
 from flask import Flask, redirect, request, url_for
 from flask_githubapp import GitHubApp  # type: ignore
-from github3 import GitHub  # type: ignore
+from github3 import GitHub
 from github3_utils.apps import ContextSwitcher
 
 if TYPE_CHECKING:
