@@ -27,38 +27,21 @@ Utility functions.
 #
 
 # stdlib
-import os
-from contextlib import contextmanager
 from datetime import date, datetime
-from functools import partial
 
 # 3rd party
 from domdf_python_tools.stringlist import StringList
+from github3_utils import Impersonate
+from github3_utils.apps import make_footer_links
 
 __all__ = ["commit_as_bot", "log", "make_pr_details"]
 
+name = "repo-helper[bot]"
 
-@contextmanager
-def commit_as_bot():
-	"""
-	Context manager to set the Git committer name and email to that of the bot.
-	"""
-
-	_environ = dict(os.environ)  # or os.environ.copy()
-	try:
-		name = "repo-helper[bot]"
-		email = f"74742576+{name}@users.noreply.github.com"
-
-		os.environ["GIT_COMMITTER_NAME"] = name
-		os.environ["GIT_COMMITTER_EMAIL"] = email
-		os.environ["GIT_AUTHOR_NAME"] = name
-		os.environ["GIT_AUTHOR_EMAIL"] = email
-
-		yield
-
-	finally:
-		os.environ.clear()
-		os.environ.update(_environ)
+commit_as_bot = Impersonate(
+		name=name,
+		email=f"74742576+{name}@users.noreply.github.com",
+		)
 
 
 def log(message: str, type: str = "INFO"):  # noqa: A002  # pylint: disable=redefined-builtin
@@ -76,7 +59,11 @@ def log(message: str, type: str = "INFO"):  # noqa: A002  # pylint: disable=rede
 TODAY: date = date.today()
 
 
-def make_pr_details():
+def make_pr_details() -> str:
+	"""
+	Returns the body of a pull request.
+	"""
+
 	buf = StringList()
 	buf.extend([
 			"<details>",
@@ -92,23 +79,7 @@ def make_pr_details():
 	buf.append("---")
 	buf.blankline(ensure_single=True)
 
-	if TODAY.month == 12:
-		buf.append(
-				" | ".join((
-						"[☃️ repo](https://github.com/repo-helper/repo-helper-bot)",
-						"[🎅 issues](https://github.com/repo-helper/repo-helper-bot/issues)",
-						"[🎁 marketplace](https://github.com/apps/repo-helper)",
-						))
-				)
-	else:
-		buf.append(
-				" | ".join((
-						"[:octocat: repo](https://github.com/repo-helper/repo-helper-bot)",
-						"[🙋 issues](https://github.com/repo-helper/repo-helper-bot/issues)",
-						"[🏪 marketplace](https://github.com/apps/repo-helper)",
-						))
-				)
-
+	buf.append(make_footer_links("repo-helper", "repo-helper-bot", event_date=date.today(), type="app"))
 	return str(buf)
 
 
