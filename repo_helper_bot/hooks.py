@@ -100,14 +100,14 @@ def assign_pr():
 	repo = github_app.payload["repository"]["name"]
 	num = github_app.payload["pull_request"]["number"]
 
-	pr = github_app.installation_client.pull_request(owner, repo, num)
-	issue = github_app.installation_client.issue(owner, repo, num)
+	pr: PullRequest = github_app.installation_client.pull_request(owner, repo, num)
+	issue: Issue = github_app.installation_client.issue(owner, repo, num)
 
 	log(f"PR #{num} opened by {pr.user} in {owner}/{repo}!")
 
 	issue.add_assignees(["domdfcoding"])
 
-	if pr.user.login != "domdfcoding":
+	if not pr.requested_reviewers and pr.user.login != "domdfcoding":
 		pr.create_review_requests(["domdfcoding"])
 
 
