@@ -1,4 +1,4 @@
-git+https://github.com/domdfcoding/repo_helper@cd9f9b3d32c3da708fcd1d9d6091da6c339a122f
+git+https://github.com/domdfcoding/repo_helper@38fdba9f61089f81ba4a66ad9be294dbe04a6492
 domdf-python-tools>=1.8.0
 dulwich>=0.20.14
 flask>=1.1.2
@@ -9,3 +9,4 @@ github3-utils>=0.4.2
 gunicorn>=20.0.4
 psycopg2-binary>=2.8.6
 southwark>=0.7.1
+click
