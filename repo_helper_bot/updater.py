@@ -35,6 +35,7 @@ from textwrap import indent, wrap
 from typing import Dict, Iterable, Optional, Union
 
 # 3rd party
+import click
 import dulwich.porcelain
 import dulwich.repo
 from domdf_python_tools.paths import in_directory
@@ -193,7 +194,7 @@ def run_update():
 	ret = 0
 
 	for repository in iter_installed_repos(context_switcher=context_switcher):
-		print(repository["full_name"])
+		click.echo(repository["full_name"])
 		ret |= update_repository(repository)
 
 	return ret
