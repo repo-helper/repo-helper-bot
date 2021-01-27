@@ -118,6 +118,7 @@ def update_repository(repository: Dict, recreate: bool = False):
 		# Update files
 		try:
 			rh = RepoHelper(tmpdir)
+			rh.load_settings()
 		except FileNotFoundError as e:
 			error_block = indent(str(e), '\t')
 			print(f"Unable to run 'repo_helper'.\nThe error was:\n{error_block}")

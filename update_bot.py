@@ -10,7 +10,6 @@ from shippinglabel.requirements import read_requirements
 head_sha = RequestsURL("https://api.github.com/repos/domdfcoding/repo_helper/commits/master").get().json()["sha"]
 
 requirements, comments, invalid = read_requirements("requirements.txt", include_invalid=True)
-print(requirements, comments, invalid)
 
 sorted_requirements = sorted(requirements)
 
