@@ -46,5 +46,6 @@ known_third_party = [
     "psycopg2_binary",
     "requests",
     "southwark",
+    "sqlalchemy",
 ]
 known_first_party = "repo_helper_bot"
