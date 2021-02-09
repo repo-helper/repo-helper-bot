@@ -38,6 +38,7 @@ from typing import Dict, Iterable, Optional, Union
 import click
 import dulwich.porcelain
 import dulwich.repo
+import sqlalchemy.exc
 from domdf_python_tools.paths import in_directory
 from domdf_python_tools.typing import PathLike
 from dulwich.errors import CommitError
@@ -314,21 +315,32 @@ def get_db_repository(repo_id: int, owner: str, name: str) -> Repository:
 	:param name: The name of the repository.
 	"""
 
-	db_repository: Optional[Repository] = Repository.query.get(repo_id)
-	if db_repository is None:
-		db_repository = Repository(
-				id=repo_id,
-				owner=owner,
-				name=name,
-				last_pr=100,
-				pull_requests="[]",
-				)
-		db.session.add(db_repository)
-	else:
-		# Update name of existing repo
-		db_repository.owner = owner
-		db_repository.name = name
+	retry = 0
 
-	db.session.commit()
+	while True:
+		retry += 1
+		try:
+			db_repository: Optional[Repository] = Repository.query.get(repo_id)
+			if db_repository is None:
+				db_repository = Repository(
+						id=repo_id,
+						owner=owner,
+						name=name,
+						last_pr=100,
+						pull_requests="[]",
+						)
+				db.session.add(db_repository)
+			else:
+				# Update name of existing repo
+				db_repository.owner = owner
+				db_repository.name = name
 
-	return db_repository
+			db.session.commit()
+
+			return db_repository
+
+		except sqlalchemy.exc.OperationalError:
+			if retry >= 10:
+				raise
+			else:
+				pass
