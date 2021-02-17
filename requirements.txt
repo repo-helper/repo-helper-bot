@@ -1,4 +1,4 @@
-git+https://github.com/domdfcoding/repo_helper@812eda9218793416e6ab03f5b47e81d8bca3dab9
+git+https://github.com/domdfcoding/repo_helper@53429fe60b4f927ebc386e77c24a1ba03794b032
 click
 domdf-python-tools>=1.8.0
 dulwich>=0.20.14
