@@ -38,3 +38,5 @@ mypy_plugins:
  - flasksqlamypy
 
 pre_commit_exclude: "^requirements.txt$"
+
+mypy_version: "0.790"
