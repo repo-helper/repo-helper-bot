@@ -21,6 +21,4 @@ Homepage = "https://github.com/domdfcoding/repo_helper_bot"
 "Issue Tracker" = "https://github.com/domdfcoding/repo_helper_bot/issues"
 "Source Code" = "https://github.com/domdfcoding/repo_helper_bot"
 
-[project.entry-points]
-
 [tool.importcheck]
