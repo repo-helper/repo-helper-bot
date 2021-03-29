@@ -10,4 +10,4 @@ github3-utils>=0.4.2
 gunicorn>=20.0.4
 psycopg2-binary>=2.8.6
 southwark>=0.7.1
-sqlalchemy==1.3.22
+sqlalchemy==1.4.3
