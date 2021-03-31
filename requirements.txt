@@ -1,5 +1,6 @@
 git+https://github.com/domdfcoding/repo_helper@c576557d9f02b19b93ad9d2ac3f26399e2cf714e
-click
+apeye>=0.7.0
+click>=7.1.2
 domdf-python-tools>=1.8.0
 dulwich>=0.20.14
 flask>=1.1.2

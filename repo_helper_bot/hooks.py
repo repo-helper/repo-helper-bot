@@ -27,10 +27,11 @@ Functions to handle GitHub webhooks.
 #
 
 # 3rd party
+from apeye import RequestsURL
 from github3.issues import Issue
 from github3.pulls import PullRequest
 from github3.repos import Repository
-from github3_utils.check_labels import label_pr_failures
+from github3_utils.check_labels import Label, label_pr_failures
 
 # this package
 from repo_helper_bot.constants import BRANCH_NAME, github_app
@@ -65,6 +66,31 @@ def on_push():
 	if pusher not in {"repo-helper", "repo-helper[bot]"}:
 		with commit_as_bot():
 			update_repository(github_app.payload["repository"])
+
+
+empty_pr_close_message = """\
+This pull request has been closed because there were no changes from the target branch.
+
+If you're still working on this PR feel free to push another commit and reopen it.
+
+---
+
+I'm a bot. If you think I've done this in error please [contact my owner](https://github.com/domdfcoding/repo_helper/issues).
+"""
+
+
+@github_app.on("pull_request.synchronize")
+def close_empty_pull_requests():
+	owner = github_app.payload["repository"]["owner"]["login"]
+	repo_name = github_app.payload["repository"]["name"]
+	num = github_app.payload["pull_request"]["number"]
+	pr: PullRequest = github_app.installation_client.pull_request(owner, repo_name, num)
+
+	if not RequestsURL(pr.diff_url).get().text:
+		issue = pr.issue()
+
+		issue.close()
+		issue.create_comment(empty_pr_close_message)
 
 
 @github_app.on("issue.reopened")
@@ -181,3 +207,44 @@ def on_check_run_completed():
 		label_pr_failures(pr)
 
 	return ''
+
+
+automerge_label = Label(
+		name="🤖 automerge", color="#87ceeb", description="Auto merge is enabled for this pull request."
+		)
+
+
+@github_app.on("pull_request.auto_merge_enabled")
+def pull_request_auto_merge_enabled():
+	owner = github_app.payload["repository"]["owner"]["login"]
+	repo_name = github_app.payload["repository"]["name"]
+	num = github_app.payload["pull_request"]["number"]
+
+	repo: Repository = github_app.installation_client.repository(owner, repo_name)
+
+	current_repo_labels = {label.name for label in repo.labels()}
+
+	if automerge_label.name not in current_repo_labels:
+		automerge_label.create(repo)
+
+	pr: PullRequest = github_app.installation_client.pull_request(owner, repo_name, num)
+	issue: Issue = pr.issue()
+
+	current_pr_labels = {label.name for label in issue.labels()}
+	current_pr_labels.add(automerge_label.name)
+	issue.add_labels(*current_pr_labels)
+
+
+@github_app.on("pull_request.auto_merge_disabled")
+def pull_request_auto_merge_disabled():
+	owner = github_app.payload["repository"]["owner"]["login"]
+	repo_name = github_app.payload["repository"]["name"]
+	num = github_app.payload["pull_request"]["number"]
+
+	pr: PullRequest = github_app.installation_client.pull_request(owner, repo_name, num)
+	issue: Issue = pr.issue()
+
+	current_pr_labels = {label.name for label in issue.labels()}
+
+	if automerge_label.name in current_pr_labels:
+		issue.remove_label(automerge_label.name)
