@@ -220,11 +220,14 @@ def pull_request_auto_merge_enabled():
 	repo_name = github_app.payload["repository"]["name"]
 	num = github_app.payload["pull_request"]["number"]
 
+	print(f"auto merge disabled for {owner}/{repo_name}#{num}")
+
 	repo: Repository = github_app.installation_client.repository(owner, repo_name)
 
 	current_repo_labels = {label.name for label in repo.labels()}
 
 	if automerge_label.name not in current_repo_labels:
+		print(f"creating {automerge_label.name} label")
 		automerge_label.create(repo)
 
 	pr: PullRequest = github_app.installation_client.pull_request(owner, repo_name, num)
@@ -240,6 +243,8 @@ def pull_request_auto_merge_disabled():
 	owner = github_app.payload["repository"]["owner"]["login"]
 	repo_name = github_app.payload["repository"]["name"]
 	num = github_app.payload["pull_request"]["number"]
+
+	print(f"auto merge disabled for {owner}/{repo_name}#{num}")
 
 	pr: PullRequest = github_app.installation_client.pull_request(owner, repo_name, num)
 	issue: Issue = pr.issue()
