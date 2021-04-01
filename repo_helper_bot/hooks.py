@@ -75,7 +75,7 @@ If you're still working on this PR feel free to push another commit and reopen i
 
 ---
 
-I'm a bot. If you think I've done this in error please 
+I'm a bot. If you think I've done this in error please
 [contact my owner](https://github.com/repo-helper/repo-helper-bot/issues).
 """
 
