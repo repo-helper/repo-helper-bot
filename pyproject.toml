@@ -26,6 +26,6 @@ Homepage = "https://github.com/domdfcoding/repo_helper_bot"
 [tool.importcheck]
 
 [tool.mkrecipe]
-extras = [ "all",]
+extras = "all"
 conda-channels = [ "domdfcoding",]
 license-key = "MIT"
