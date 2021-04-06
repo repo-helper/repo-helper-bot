@@ -18,7 +18,7 @@ repo_root = pathlib.Path(__file__).parent
 
 install_requires = []
 
-for line in (repo_root / "requirements.txt").read_text(encoding="UFT-8").split('\n'):
+for line in (repo_root / "requirements.txt").read_text(encoding="UTF-8").split('\n'):
 	if line.startswith("git+https://github.com/domdfcoding/repo_helper@"):
 		install_requires.append("repo-helper")
 	else:
