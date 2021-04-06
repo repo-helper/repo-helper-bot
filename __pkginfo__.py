@@ -11,31 +11,10 @@
 # This script based on https://github.com/rocky/python-uncompyle6/blob/master/__pkginfo__.py
 #
 
-# stdlib
-import pathlib
-
 __all__ = [
-		"__copyright__",
 		"__version__",
-		"repo_root",
-		"install_requires",
 		"extras_require",
 		]
 
-__copyright__ = """
-2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
-"""
-
 __version__ = "0.0.0"
-
-repo_root = pathlib.Path(__file__).parent
-extras_require = {"all": []}
-
-
-install_requires = []
-
-for line in (repo_root / "requirements.txt").read_text(encoding="utf-8").split('\n'):
-	if line.startswith("git+https://github.com/domdfcoding/repo_helper@"):
-		install_requires.append("repo-helper")
-	else:
-		install_requires.append(line)
+extras_require = {}

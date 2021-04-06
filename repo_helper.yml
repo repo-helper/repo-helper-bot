@@ -31,7 +31,7 @@ additional_ignore:
  - automerge.py
 
 exclude_files:
- - pkginfo
+ - setup
 
 mypy_plugins:
  - sqlmypy

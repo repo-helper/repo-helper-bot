@@ -2,6 +2,7 @@
 # This file is managed by 'repo_helper'. Don't edit it directly.
 
 # stdlib
+import pathlib
 import shutil
 import sys
 
@@ -12,6 +13,17 @@ sys.path.append('.')
 
 # this package
 from __pkginfo__ import *  # pylint: disable=wildcard-import
+
+repo_root = pathlib.Path(__file__).parent
+
+install_requires = []
+
+for line in (repo_root / "requirements.txt").read_text(encoding="UFT-8").split('\n'):
+	if line.startswith("git+https://github.com/domdfcoding/repo_helper@"):
+		install_requires.append("repo-helper")
+	else:
+		install_requires.append(line)
+
 
 setup(
 		description="I keep your repository configuration up-to-date using 'repo_helper'.",
