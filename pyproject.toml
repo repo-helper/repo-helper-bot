@@ -19,13 +19,13 @@ name = "Dominic Davis-Foster"
 file = "LICENSE"
 
 [project.urls]
-Homepage = "https://github.com/domdfcoding/repo_helper_bot"
-"Issue Tracker" = "https://github.com/domdfcoding/repo_helper_bot/issues"
-"Source Code" = "https://github.com/domdfcoding/repo_helper_bot"
+Homepage = "https://github.com/repo-helper/repo_helper_bot"
+"Issue Tracker" = "https://github.com/repo-helper/repo_helper_bot/issues"
+"Source Code" = "https://github.com/repo-helper/repo_helper_bot"
 
 [tool.importcheck]
 
 [tool.mkrecipe]
 extras = "all"
-conda-channels = [ "domdfcoding",]
+conda-channels = [ "repo-helper",]
 license-key = "MIT"
