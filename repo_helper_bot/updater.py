@@ -126,6 +126,7 @@ def update_repository(repository: Dict, recreate: bool = False):
 
 		managed_files = rh.run()
 		staged_files = stage_changes(repo.path, managed_files)
+		print(f"{staged_files=}")
 
 		if not staged_files and recreate:
 			# Everything is up to date, close PR.
