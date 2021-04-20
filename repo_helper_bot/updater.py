@@ -222,8 +222,10 @@ def close_pr(
 	repo: GitHubRepository = client.repository(owner, repository)
 	pull_request: ShortPullRequest
 
-	for pull_request in repo.pull_requests(state="open"):
-		if pull_request.number in bots_prs:
+	for pull_request in repo.pull_requests(state="open", head="repo-helper-update"):
+		print(f"{pull_request=}")
+		# if pull_request.number in bots_prs:
+		if pull_request.head == "repo-helper-update":
 			print(f"Closing PR#{pull_request}")
 			pull_request.create_comment(message)
 			pull_request.close()  # TODO: the bot seems to be closing without comment
