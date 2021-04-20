@@ -131,7 +131,8 @@ def update_repository(repository: Dict, recreate: bool = False):
 
 		if not staged_files and recreate:
 			# Everything is up to date, close PR.
-			close_pr(owner, repository_name, db_repository.get_prs())
+			close_pr(owner, repository_name)
+			return 0
 
 		try:
 			if not commit_changed_files(
@@ -207,7 +208,6 @@ def run_update():
 def close_pr(
 		owner: str,
 		repository: str,
-		bots_prs: Iterable[int],
 		message="Looks like everything is already up to date.",
 		):
 	"""
@@ -222,15 +222,12 @@ def close_pr(
 	repo: GitHubRepository = client.repository(owner, repository)
 	pull_request: ShortPullRequest
 
-	for pull_request in repo.pull_requests(state="open", head="repo-helper-update"):
-		print(f"{pull_request=}")
-		# if pull_request.number in bots_prs:
-		if pull_request.head == "repo-helper-update":
-			print(f"Closing PR#{pull_request}")
-			pull_request.create_comment(message)
-			pull_request.close()  # TODO: the bot seems to be closing without comment
-			repo.ref(f"heads/{BRANCH_NAME}").delete()
-			break
+	for pull_request in repo.pull_requests(state="open", head=BRANCH_NAME):
+		print(f"Closing PR#{pull_request}")
+		pull_request.create_comment(message)
+		pull_request.close()
+		repo.ref(f"heads/{BRANCH_NAME}").delete()
+		break
 
 
 def recreate_branch(repo: Union[dulwich.repo.Repo, PathLike]):
