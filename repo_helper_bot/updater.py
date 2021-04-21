@@ -126,8 +126,6 @@ def update_repository(repository: Dict, recreate: bool = False):
 
 		managed_files = rh.run()
 		staged_files = stage_changes(repo.path, managed_files)
-		print(f"{staged_files=}")
-		print(f"{recreate=}")
 
 		if not staged_files and recreate:
 			# Everything is up to date, close PR.
@@ -215,7 +213,6 @@ def close_pr(
 
 	:param owner: The owner of the repository.
 	:param repository: The repository name.
-	:param bots_prs: The numbers of the pull requests deleted by the bot.
 	:param message: The message to close the pull request with.
 	"""
 
