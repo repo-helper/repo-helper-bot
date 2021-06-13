@@ -2,7 +2,7 @@
 import os
 
 # 3rd party
-from apeye import RequestsURL
+from apeye.requests_url import RequestsURL
 from domdf_python_tools.paths import PathPlus
 from domdf_python_tools.stringlist import StringList
 from shippinglabel.requirements import read_requirements

@@ -27,7 +27,7 @@ Functions to handle GitHub webhooks.
 #
 
 # 3rd party
-from apeye import RequestsURL
+from apeye.requests_url import RequestsURL
 from github3.issues import Issue
 from github3.pulls import PullRequest
 from github3.repos import Repository
