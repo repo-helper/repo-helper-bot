@@ -1,4 +1,4 @@
-git+https://github.com/repo-helper/repo_helper@95d9f2b4b3b7db8e5177b9527e3b1ecdd0ab05a2
+git+https://github.com/repo-helper/repo_helper@97e90a79955506441979f3f9c58fded95a848e74
 apeye>=0.7.0
 click>=7.1.2
 domdf-python-tools>=1.8.0
