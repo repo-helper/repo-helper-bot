@@ -26,12 +26,16 @@ Functions to handle GitHub webhooks.
 #  OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+# stdlib
+from typing import Set, Union
+
+
 # 3rd party
 from apeye.requests_url import RequestsURL
 from github3.issues import Issue
-from github3.pulls import PullRequest
+from github3.pulls import PullRequest, ShortPullRequest
 from github3.repos import Repository
-from github3_utils.check_labels import Label, label_pr_failures
+from github3_utils.check_labels import _python_dev_re, get_checks_for_pr, Label
 
 # this package
 from repo_helper_bot.constants import BRANCH_NAME, github_app
@@ -188,6 +192,54 @@ def on_issue_comment():
 					update_repository(github_app.payload["repository"], recreate=True)
 
 	return ''
+
+
+def label_pr_failures(pull: Union[PullRequest, ShortPullRequest]) -> Set[str]:
+	"""
+	Labels the given pull request to indicate which checks are failing.
+
+	:param pull:
+
+	:return: The new labels set for the pull request.
+	"""
+
+	pr_checks = get_checks_for_pr(pull)
+
+	failure_labels: Set[str] = set()
+	success_labels: Set[str] = set()
+
+	def determine_labels(from_, to):
+		for check in from_:
+			if _python_dev_re.match(check):
+				continue
+
+			if check in {"Flake8", "docs"}:
+				to.add(f"failure: {check.lower()}")
+			elif check.startswith("mypy"):
+				to.add("failure: mypy")
+			elif check.startswith("ubuntu"):
+				to.add("failure: Linux")
+			elif check.startswith("windows"):
+				to.add("failure: Windows")
+
+	determine_labels(pr_checks.failing, failure_labels)
+	determine_labels(pr_checks.successful, success_labels)
+
+	issue: Issue = pull.issue()
+
+	current_labels = {label.name for label in issue.labels()}
+
+	for label in success_labels:
+		if label in current_labels and label not in failure_labels:
+			issue.remove_label(label)
+
+	new_labels = current_labels - success_labels
+	new_labels.update(failure_labels)
+
+	if new_labels != current_labels:
+		issue.add_labels(*new_labels)
+
+	return new_labels
 
 
 @github_app.on("check_run.completed")
