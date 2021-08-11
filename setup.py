@@ -29,8 +29,8 @@ setup(
 		description="I keep your repository configuration up-to-date using 'repo_helper'.",
 		extras_require=extras_require,
 		install_requires=install_requires,
+		name="repo-helper-bot",
 		py_modules=[],
-		version=__version__,
 		)
 
 shutil.rmtree("repo_helper_bot.egg-info", ignore_errors=True)
