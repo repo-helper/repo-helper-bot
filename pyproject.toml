@@ -25,7 +25,17 @@ Homepage = "https://github.com/repo-helper/repo_helper_bot"
 
 [tool.importcheck]
 
-[tool.mkrecipe]
-extras = "all"
-conda-channels = [ "repo-helper",]
+[tool.whey]
+base-classifiers = []
+python-versions = [ "3.6", "3.7", "3.8", "3.9",]
+python-implementations = [ "CPython",]
+platforms = [ "Windows", "macOS", "Linux",]
 license-key = "MIT"
+
+[tool.mypy]
+python_version = "3.6"
+namespace_packages = true
+check_untyped_defs = true
+warn_unused_ignores = true
+no_implicit_optional = true
+plugins = [ "sqlmypy", "flasksqlamypy",]
