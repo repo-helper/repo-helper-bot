@@ -84,7 +84,7 @@ def https_redirect() -> Optional["Response"]:
 
 
 if "ON_HEROKU" in os.environ:
-	app.before_request(https_redirect)
+	app.before_request(https_redirect)  # type: ignore
 
 BRANCH_NAME = "repo-helper-update"
 
