@@ -32,7 +32,7 @@ from datetime import datetime
 from subprocess import Popen
 from tempfile import TemporaryDirectory
 from textwrap import indent, wrap
-from typing import Dict, Iterable, Optional, Union
+from typing import Dict, Iterator, Optional, Tuple, Union
 
 # 3rd party
 import click
@@ -189,18 +189,14 @@ def update_repository(repository: Dict, recreate: bool = False):
 		return 0
 
 
-def run_update():
+def run_update() -> Iterator[Tuple[str, int]]:
 	"""
 	Run the updater.
 	"""
 
-	ret = 0
-
 	for repository in iter_installed_repos(context_switcher=context_switcher):
 		click.echo(repository["full_name"])
-		ret |= update_repository(repository)
-
-	return ret
+		yield repository["full_name"], update_repository(repository)
 
 
 def close_pr(
