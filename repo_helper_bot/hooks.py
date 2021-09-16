@@ -29,13 +29,12 @@ Functions to handle GitHub webhooks.
 # stdlib
 from typing import Set, Union
 
-
 # 3rd party
 from apeye.requests_url import RequestsURL
 from github3.issues import Issue
 from github3.pulls import PullRequest, ShortPullRequest
 from github3.repos import Repository
-from github3_utils.check_labels import _python_dev_re, get_checks_for_pr, Label
+from github3_utils.check_labels import Label, _python_dev_re, get_checks_for_pr
 
 # this package
 from repo_helper_bot.constants import BRANCH_NAME, github_app

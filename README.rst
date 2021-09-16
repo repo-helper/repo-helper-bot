@@ -46,8 +46,8 @@ repo_helper_bot
 	:target: https://github.com/repo-helper/repo_helper_bot/actions?query=workflow%3A%22mypy%22
 	:alt: mypy status
 
-.. |requires| image:: https://requires.io/github/repo-helper/repo_helper_bot/requirements.svg?branch=master
-	:target: https://requires.io/github/repo-helper/repo_helper_bot/requirements/?branch=master
+.. |requires| image:: https://dependency-dash.herokuapp.com/github/repo-helper/repo_helper_bot/badge.svg
+	:target: https://dependency-dash.herokuapp.com/github/repo-helper/repo_helper_bot/
 	:alt: Requirements Status
 
 .. |codefactor| image:: https://img.shields.io/codefactor/grade/github/repo-helper/repo_helper_bot?logo=codefactor
