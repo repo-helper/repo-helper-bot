@@ -38,7 +38,7 @@ namespace_packages = true
 check_untyped_defs = true
 warn_unused_ignores = true
 no_implicit_optional = true
-plugins = "sqlmypy, flasksqlamypy"
+plugins = [ "sqlmypy", "flasksqlamypy",]
 show_error_codes = true
 
 [tool.snippet-fmt]
