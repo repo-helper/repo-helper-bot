@@ -171,7 +171,7 @@ def update_repository(repository: Dict, recreate: bool = False):
 		base = github_repo.default_branch
 		head = f"{owner}:{BRANCH_NAME}"
 
-		if not list(github_repo.pull_requests(base=base, head=head)):
+		if not list(github_repo.pull_requests(state="open", base=base, head=head)):
 			created_pr = github_repo.create_pull(
 					title="[repo-helper] Configuration Update",
 					base=base,
