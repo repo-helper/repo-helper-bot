@@ -61,7 +61,7 @@ from repo_helper_bot.utils import make_pr_details
 __all__ = ["run_update", "update_repository"]
 
 
-def update_repository(repository: Dict, recreate: bool = False):
+def update_repository(repository: Dict, recreate: bool = False) -> int:
 	"""
 	Run the updater for the given repository.
 
