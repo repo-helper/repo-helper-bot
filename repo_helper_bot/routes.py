@@ -26,10 +26,15 @@ HTTP routes.
 #  OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-# this package
-from repo_helper_bot.constants import app
+# 3rd party
+from github3_utils.apps import iter_installed_repos
 
-__all__ = ["home"]
+# this package
+from repo_helper_bot.constants import app, context_switcher
+from repo_helper_bot.updater import update_repository
+from repo_helper_bot.utils import commit_as_bot
+
+__all__ = ["home", "request_run"]
 
 
 @app.route('/')
@@ -38,4 +43,27 @@ def home():
 	Route for the homepage.
 	"""
 
-	return "This is repo-helper-bot, running on Heroku."
+	return "This is repo-helper-bot, running on Heroku.\n"
+
+
+@app.route("/request/<username>/<repository>")
+def request_run(username: str, repository: str):
+	"""
+	Route for the homepage.
+	"""
+
+	context_switcher.login_as_app()
+	full_name = f"{username}/{repository}"
+
+	with commit_as_bot():
+		for repository_dict in iter_installed_repos(context_switcher=context_switcher):
+			if repository_dict["full_name"] == full_name:
+				result = update_repository(repository_dict)
+				break
+		else:
+			return "Repository not found, or repo-helper-bot not installed on it.\n", 404
+
+	if result:
+		return f"An error occurred when running for {full_name}.\n", 500
+	else:
+		return f"Run successful for {full_name}.\n"
