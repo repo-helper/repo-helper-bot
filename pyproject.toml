@@ -7,9 +7,8 @@ name = "repo_helper_bot"
 version = "0.0.0"
 description = "I keep your repository configuration up-to-date using 'repo_helper'."
 readme = "README.rst"
-keywords = []
-dynamic = [ "dependencies",]
 requires-python = ">=3.6.1"
+keywords = []
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -21,6 +20,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: Implementation :: CPython",
 ]
+dynamic = [ "dependencies",]
 
 [[project.authors]]
 name = "Dominic Davis-Foster"
