@@ -1,8 +1,8 @@
-git+https://github.com/repo-helper/repo_helper@1c52e5d0c5698395d60c886648ce31f1d86c0ba0
+git+https://github.com/repo-helper/repo_helper@e8408a2859965a309b38bb991abcfcb96a0f82fa
 apeye>=0.7.0
 click>=7.1.2
 domdf-python-tools>=1.8.0
-dulwich>=0.20.14,!=0.20.46
+dulwich!=0.20.46,>=0.20.14
 flask>=1.1.2
 flask-githubapp>=0.2.0
 flask-sqlalchemy>=2.4.4
