@@ -46,7 +46,7 @@ def home():
 	return "This is repo-helper-bot, running on Heroku.\n"
 
 
-@app.route("/request/<username>/<repository>")
+@app.route("/request/<username>/<repository>/")
 def request_run(username: str, repository: str):
 	"""
 	Route for the homepage.
