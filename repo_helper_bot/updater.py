@@ -110,7 +110,7 @@ def update_repository(repository: Dict, recreate: bool = False) -> int:
 		if recreate:
 			# Delete any existing branch and create again from master
 			recreate_branch(repo)
-		elif f"refs/remotes/origin/{BRANCH_NAME}".encode("UTF-8") in dict(repo.refs):
+		elif f"refs/remotes/origin/{BRANCH_NAME}".encode() in dict(repo.refs):
 			checkout_branch(repo)
 		else:
 			# Switch to new branch
@@ -265,7 +265,7 @@ def create_branch(repo: Union[dulwich.repo.Repo, PathLike]):
 
 	with open_repo_closing(repo) as repo:  # pylint: disable=redefined-argument-from-local
 		dulwich.porcelain.update_head(repo, b"HEAD", new_branch=BRANCH_NAME.encode("UTF-8"))
-		repo.refs[f"refs/heads/{BRANCH_NAME}".encode("UTF-8")] = repo.refs[b'refs/heads/master']
+		repo.refs[f"refs/heads/{BRANCH_NAME}".encode()] = repo.refs[b'refs/heads/master']
 
 
 def clone(url: str, dest: PathLike) -> Repo:
