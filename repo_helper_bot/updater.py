@@ -215,7 +215,7 @@ def close_pr(
 	repo: GitHubRepository = client.repository(owner, repository)
 	pull_request: ShortPullRequest
 
-	for pull_request in repo.pull_requests(state="open", head=BRANCH_NAME):
+	for pull_request in repo.pull_requests(state="open", head=f"{owner}:{BRANCH_NAME}"):
 		print(f"Closing PR#{pull_request}")
 		pull_request.create_comment(message)
 		pull_request.close()
