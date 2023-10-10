@@ -61,8 +61,14 @@ zip-safe = false
 include-package-data = true
 platforms = [ "Windows", "macOS", "Linux",]
 
+[tool.dep_checker]
+allowed_unused = [ "werkzeug", "gunicorn", "psycopg2", "psycopg2_binary",]
+
 [tool.dependency-dash."requirements.txt"]
 order = 10
+
+[tool.dep_checker.name_mapping]
+github3_py = "github3"
 
 [tool.snippet-fmt.languages.python]
 reformat = true
