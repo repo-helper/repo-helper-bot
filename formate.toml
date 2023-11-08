@@ -48,5 +48,6 @@ known_third_party = [
     "requests",
     "southwark",
     "sqlalchemy",
+    "werkzeug",
 ]
 known_first_party = "repo_helper_bot"

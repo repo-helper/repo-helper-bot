@@ -4,7 +4,7 @@ Contributing
 
 .. This file based on https://github.com/PyGithub/PyGithub/blob/master/CONTRIBUTING.md
 
-``repo_helper_bot`` uses `tox <https://tox.readthedocs.io>`_ to automate testing and packaging,
+``repo-helper-bot`` uses `tox <https://tox.readthedocs.io>`_ to automate testing and packaging,
 and `pre-commit <https://pre-commit.com>`_ to maintain code quality.
 
 Install ``pre-commit`` with ``pip`` and install the git hook:

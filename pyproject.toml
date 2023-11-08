@@ -3,7 +3,7 @@ requires = [ "setuptools!=61.*,>=40.6.0", "wheel>=0.34.2",]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "repo_helper_bot"
+name = "repo-helper-bot"
 version = "0.0.0"
 description = "I keep your repository configuration up-to-date using 'repo_helper'."
 readme = "README.rst"
@@ -43,6 +43,7 @@ python-versions = [ "3.6", "3.7", "3.8", "3.9",]
 python-implementations = [ "CPython",]
 platforms = [ "Windows", "macOS", "Linux",]
 license-key = "MIT"
+package = "repo_helper_bot"
 
 [tool.mypy]
 python_version = "3.8"
@@ -64,11 +65,11 @@ platforms = [ "Windows", "macOS", "Linux",]
 [tool.dep_checker]
 allowed_unused = [ "werkzeug", "gunicorn", "psycopg2", "psycopg2_binary",]
 
-[tool.dependency-dash."requirements.txt"]
-order = 10
-
 [tool.dep_checker.name_mapping]
 github3_py = "github3"
+
+[tool.dependency-dash."requirements.txt"]
+order = 10
 
 [tool.snippet-fmt.languages.python]
 reformat = true
