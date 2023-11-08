@@ -20,7 +20,7 @@ assignees: domdfcoding
 
   * Operating System:
   * Python:
-  * repo_helper_bot:
+  * repo-helper-bot:
 
 
 ## Other Additional Information:
