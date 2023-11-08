@@ -1,6 +1,6 @@
 # Configuration for 'repo_helper' (https://github.com/domdfcoding/repo_helper)
 ---
-modname: 'repo_helper_bot'
+modname: 'repo-helper-bot'
 copyright_years: '2020-2022'
 author: 'Dominic Davis-Foster'
 email: 'dominic@davis-foster.co.uk'
