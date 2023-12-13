@@ -7,17 +7,18 @@ name = "repo-helper-bot"
 version = "0.0.0"
 description = "I keep your repository configuration up-to-date using 'repo_helper'."
 readme = "README.rst"
-requires-python = ">=3.6.1"
+requires-python = ">=3.8"
 keywords = []
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: Implementation :: CPython",
 ]
 dynamic = [ "dependencies",]
@@ -39,7 +40,7 @@ Homepage = "https://github.com/repo-helper/repo-helper-bot"
 
 [tool.whey]
 base-classifiers = []
-python-versions = [ "3.6", "3.7", "3.8", "3.9",]
+python-versions = [ "3.8", "3.9", "3.10", "3.11", "3.12",]
 python-implementations = [ "CPython",]
 platforms = [ "Windows", "macOS", "Linux",]
 license-key = "MIT"
