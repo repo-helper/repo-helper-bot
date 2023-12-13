@@ -27,7 +27,7 @@ Functions to handle GitHub webhooks.
 #
 
 # stdlib
-from typing import Set, Union
+from typing import Iterable, Set, Union
 
 # 3rd party
 from apeye.requests_url import RequestsURL
@@ -45,7 +45,7 @@ __all__ = ["assign_issue", "assign_pr", "on_issue_comment", "on_push"]
 
 
 @github_app.on("push")
-def on_push():
+def on_push() -> str:
 	"""
 	Hook to run ``repo-helper`` when a push is made to the repository.
 	"""
@@ -70,6 +70,8 @@ def on_push():
 		with commit_as_bot():
 			update_repository(github_app.payload["repository"])
 
+	return ''
+
 
 empty_pr_close_message = """\
 This pull request has been closed because there were no changes from the target branch.
@@ -84,7 +86,7 @@ I'm a bot. If you think I've done this in error please \
 
 
 @github_app.on("pull_request.synchronize")
-def close_empty_pull_requests():
+def close_empty_pull_requests() -> None:
 	owner = github_app.payload["repository"]["owner"]["login"]
 	repo_name = github_app.payload["repository"]["name"]
 	num = github_app.payload["pull_request"]["number"]
@@ -99,7 +101,7 @@ def close_empty_pull_requests():
 
 @github_app.on("issue.reopened")
 @github_app.on("issue.opened")
-def assign_issue():
+def assign_issue() -> None:
 	"""
 	Hook to assign me to issues.
 
@@ -114,12 +116,13 @@ def assign_issue():
 
 	log(f"Issue #{num} opened by {issue.user} in {owner}/{repo}!")
 
+	# TODO: parse assignee from repo_helper.yml
 	issue.add_assignees(["domdfcoding"])
 
 
 @github_app.on("pull_request.reopened")
 @github_app.on("pull_request.opened")
-def assign_pr():
+def assign_pr() -> None:
 	"""
 	Hook to assign me to pull requests and request my review.
 
@@ -135,6 +138,7 @@ def assign_pr():
 
 	log(f"PR #{num} opened by {pr.user} in {owner}/{repo}!")
 
+	# TODO: parse assignee from repo_helper.yml
 	issue.add_assignees(["domdfcoding"])
 
 	if not pr.requested_reviewers and pr.user.login != "domdfcoding":
@@ -142,7 +146,7 @@ def assign_pr():
 
 
 @github_app.on("pull_request.closed")
-def cleanup_pr():
+def cleanup_pr() -> str:
 	"""
 	Delete the ``repo-helper-update`` branch when the bot's PR is merged.
 	"""
@@ -162,9 +166,11 @@ def cleanup_pr():
 			repo_obj = github_app.installation_client.repository(owner, repo)
 			repo_obj.ref("heads/ pre-commit-ci-update-config").delete()
 
+	return ''
+
 
 @github_app.on("issue_comment")
-def on_issue_comment():
+def on_issue_comment() -> str:
 	"""
 	Hook to respond to commands in pull request comments. comment.
 	"""
@@ -207,7 +213,7 @@ def label_pr_failures(pull: Union[PullRequest, ShortPullRequest]) -> Set[str]:
 	failure_labels: Set[str] = set()
 	success_labels: Set[str] = set()
 
-	def determine_labels(from_, to):
+	def determine_labels(from_: Iterable[str], to: Set[str]) -> None:
 		for check in from_:
 			if _python_dev_re.match(check):
 				continue
@@ -242,7 +248,7 @@ def label_pr_failures(pull: Union[PullRequest, ShortPullRequest]) -> Set[str]:
 
 
 @github_app.on("check_run.completed")
-def on_check_run_completed():
+def on_check_run_completed() -> str:
 	"""
 	Hook to respond to the completion of check runs.
 	"""
@@ -254,7 +260,6 @@ def on_check_run_completed():
 	print(f"New check status for repository {repo_name}:")
 
 	pr: PullRequest
-	issue: Issue
 	for pr in repo.pull_requests(state="open", head=head_branch):
 		label_pr_failures(pr)
 
@@ -267,7 +272,7 @@ automerge_label = Label(
 
 
 @github_app.on("pull_request.auto_merge_enabled")
-def pull_request_auto_merge_enabled():
+def pull_request_auto_merge_enabled() -> None:
 	owner = github_app.payload["repository"]["owner"]["login"]
 	repo_name = github_app.payload["repository"]["name"]
 	num = github_app.payload["pull_request"]["number"]
@@ -291,7 +296,7 @@ def pull_request_auto_merge_enabled():
 
 
 @github_app.on("pull_request.auto_merge_disabled")
-def pull_request_auto_merge_disabled():
+def pull_request_auto_merge_disabled() -> None:
 	owner = github_app.payload["repository"]["owner"]["login"]
 	repo_name = github_app.payload["repository"]["name"]
 	num = github_app.payload["pull_request"]["number"]

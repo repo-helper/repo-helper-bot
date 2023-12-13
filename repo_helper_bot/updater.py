@@ -35,7 +35,7 @@ from textwrap import indent, wrap
 from typing import Dict, Iterator, Optional, Tuple, Union
 
 # 3rd party
-import click
+import click  # type: ignore[import]
 import dulwich.porcelain
 import dulwich.repo
 import sqlalchemy.exc
@@ -203,7 +203,7 @@ def close_pr(
 		owner: str,
 		repository: str,
 		message="Looks like everything is already up to date.",
-		):
+		) -> None:
 	"""
 	Close the bot's current pull requests, and delete the branch.
 
@@ -223,7 +223,7 @@ def close_pr(
 		break
 
 
-def recreate_branch(repo: Union[dulwich.repo.Repo, PathLike]):
+def recreate_branch(repo: Union[dulwich.repo.Repo, PathLike]) -> None:
 	"""
 	Delete any existing branch and create again from master.
 
@@ -256,7 +256,7 @@ def checkout_branch(repo: Union[dulwich.repo.Repo, PathLike]) -> int:
 		return process.wait()
 
 
-def create_branch(repo: Union[dulwich.repo.Repo, PathLike]):
+def create_branch(repo: Union[dulwich.repo.Repo, PathLike]) -> None:
 	"""
 	Create and checkout a new branch from master.
 
@@ -283,7 +283,10 @@ def clone(url: str, dest: PathLike) -> Repo:
 	return Repo(dest)
 
 
-def get_installation_access_token(github_repo: GitHubRepository, installation_id: int):
+def get_installation_access_token(
+		github_repo: GitHubRepository,
+		installation_id: int,
+		) -> str:
 	"""
 	Returns the installation access token for the given installation.
 

@@ -70,10 +70,10 @@ class Repository(db.Model):  # type: ignore
 
 		return f"{self.owner}/{self.name}"
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		return f'<Repository {self.fullname!r}>'
 
-	def add_pr(self, number: int):
+	def add_pr(self, number: int) -> None:
 		"""
 		Add a pull request number to the list of previous PRs for this repository.
 
