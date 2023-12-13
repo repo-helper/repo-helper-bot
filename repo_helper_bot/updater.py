@@ -35,7 +35,7 @@ from textwrap import indent, wrap
 from typing import Dict, Iterator, Optional, Tuple, Union
 
 # 3rd party
-import click  # type: ignore[import]
+import click  # type: ignore[import-untyped]
 import dulwich.porcelain
 import dulwich.repo
 import sqlalchemy.exc
@@ -202,7 +202,7 @@ def run_update() -> Iterator[Tuple[str, int]]:
 def close_pr(
 		owner: str,
 		repository: str,
-		message="Looks like everything is already up to date.",
+		message: str = "Looks like everything is already up to date.",
 		) -> None:
 	"""
 	Close the bot's current pull requests, and delete the branch.

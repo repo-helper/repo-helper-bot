@@ -44,7 +44,7 @@ commit_as_bot = Impersonate(
 		)
 
 
-def log(message: str, type: str = "INFO"):  # noqa: A002  # pylint: disable=redefined-builtin
+def log(message: str, type: str = "INFO") -> None:  # noqa: A002  # pylint: disable=redefined-builtin
 	"""
 	Log a message to the terminal.
 

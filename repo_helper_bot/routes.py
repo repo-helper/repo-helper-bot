@@ -26,6 +26,9 @@ HTTP routes.
 #  OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+# stdlib
+from typing import Tuple
+
 # 3rd party
 from github3_utils.apps import iter_installed_repos
 
@@ -38,16 +41,16 @@ __all__ = ["home", "request_run"]
 
 
 @app.route('/')
-def home():
+def home() -> str:
 	"""
 	Route for the homepage.
 	"""
 
-	return "This is repo-helper-bot, running on Heroku.\n"
+	return "This is repo-helper-bot, running on dokku.\n"
 
 
 @app.route("/request/<username>/<repository>/")
-def request_run(username: str, repository: str):
+def request_run(username: str, repository: str) -> Tuple[str, int]:
 	"""
 	Route for the homepage.
 	"""
@@ -66,4 +69,4 @@ def request_run(username: str, repository: str):
 	if result:
 		return f"An error occurred when running for {full_name}.\n", 500
 	else:
-		return f"Run successful for {full_name}.\n"
+		return f"Run successful for {full_name}.\n", 200
