@@ -37,6 +37,14 @@ Homepage = "https://github.com/repo-helper/repo-helper-bot"
 "Source Code" = "https://github.com/repo-helper/repo-helper-bot"
 
 [tool.importcheck]
+always = [
+    "repo_helper_bot",
+    "repo_helper_bot.constants",
+    "repo_helper_bot.hooks",
+    "repo_helper_bot.routes",
+    "repo_helper_bot.updater",
+    "repo_helper_bot.utils",
+]
 
 [tool.whey]
 base-classifiers = []
