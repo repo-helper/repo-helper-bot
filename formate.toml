@@ -50,4 +50,4 @@ known_third_party = [
     "sqlalchemy",
     "werkzeug",
 ]
-known_first_party = "repo_helper_bot"
+known_first_party = [ "repo_helper_bot",]
