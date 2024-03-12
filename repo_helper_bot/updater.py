@@ -46,6 +46,7 @@ from github3 import apps
 from github3.exceptions import NotFoundError
 from github3.pulls import ShortPullRequest
 from github3.repos import Repository as GitHubRepository
+from github3.session import GitHubSession
 from github3_utils.apps import iter_installed_repos
 from repo_helper.cli.utils import commit_changed_files  # nodep
 from repo_helper.core import RepoHelper  # nodep
@@ -296,6 +297,7 @@ def get_installation_access_token(
 
 	headers = apps.create_jwt_headers(GITHUBAPP_KEY, GITHUBAPP_ID, expire_in=30)
 	url = github_repo._build_url("app", "installations", str(installation_id), "access_tokens")
+	assert isinstance(github_repo.session, GitHubSession)
 	with github_repo.session.no_auth():
 		response = github_repo.session.post(url, headers=headers)
 		json_response = github_repo._json(response, 201)

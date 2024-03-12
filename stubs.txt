@@ -2,4 +2,4 @@ git+https://github.com/domdfcoding/dulwich-stubs
 git+https://github.com/domdfcoding/pytest-regressions-stubs
 sqlalchemy-stubs
 git+https://github.com/ssfdust/flask-sqlalchemy-stubs
-git+https://github.com/domdfcoding/github3.py@stubs
+git+https://github.com/domdfcoding/github3.py@stubs-v4
