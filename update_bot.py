@@ -7,24 +7,32 @@ from domdf_python_tools.paths import PathPlus
 from domdf_python_tools.stringlist import StringList
 from shippinglabel.requirements import read_requirements
 
-head_sha = RequestsURL("https://api.github.com/repos/domdfcoding/repo_helper/commits/master").get().json()["sha"]
+os.system("git stash")
 
-requirements, comments, invalid = read_requirements("requirements.txt", include_invalid=True)
+try:
 
-sorted_requirements = sorted(requirements)
+	head_sha = RequestsURL("https://api.github.com/repos/repo-helper/repo_helper/commits/master"
+							).get().json()["sha"]
 
-buf = StringList(comments)
+	requirements, comments, invalid = read_requirements("requirements.txt", include_invalid=True)
 
-for line in invalid:
-	if line.startswith("git+https://github.com/domdfcoding/repo_helper@"):
-		buf.append(f"git+https://github.com/domdfcoding/repo_helper@{head_sha}")
-	else:
-		buf.append(line)
+	sorted_requirements = sorted(requirements)
 
-buf.extend(str(req) for req in sorted_requirements)
+	buf = StringList(comments)
 
-PathPlus("requirements.txt").write_lines(buf)
+	for line in invalid:
+		if line.startswith("git+https://github.com/repo-helper/repo_helper@"):
+			buf.append(f"git+https://github.com/repo-helper/repo_helper@{head_sha}")
+		else:
+			buf.append(line)
 
-os.system("pre-commit")
-os.system("git stage requirements.txt")
-os.system("git commit -m 'Bump repo-helper version'")
+	buf.extend(str(req) for req in sorted_requirements)
+
+	PathPlus("requirements.txt").write_lines(buf)
+
+	os.system("pre-commit")
+	os.system("git stage requirements.txt")
+	os.system("git commit -m 'Bump repo-helper version'")
+
+finally:
+	os.system("git stash pop")
