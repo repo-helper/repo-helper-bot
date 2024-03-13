@@ -42,3 +42,6 @@ mypy_plugins:
 pre_commit_exclude: "^requirements.txt$"
 
 mypy_version: "1.7.1"
+
+tox_unmanaged:
+ - testenv

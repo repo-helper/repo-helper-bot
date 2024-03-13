@@ -63,7 +63,8 @@ context_switcher = ContextSwitcher(
 		app_id=GITHUBAPP_ID,
 		)
 
-context_switcher.login_as_app()
+if not os.environ.get("RH_BOT_IMPORTCHECK", 0):
+	context_switcher.login_as_app()
 
 
 def https_redirect() -> Optional["Response"]:
