@@ -45,3 +45,4 @@ mypy_version: "1.7.1"
 
 tox_unmanaged:
  - testenv
+ - testenv:py312

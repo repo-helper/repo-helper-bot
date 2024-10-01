@@ -1,5 +1,5 @@
 [build-system]
-requires = [ "setuptools!=61.*,>=40.6.0", "wheel>=0.34.2",]
+requires = [ "setuptools!=61.*,<=67.1.0,>=40.6.0", "wheel>=0.34.2",]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -61,6 +61,7 @@ warn_unused_ignores = true
 no_implicit_optional = true
 plugins = [ "sqlmypy", "flasksqlamypy",]
 show_error_codes = true
+incremental = false
 
 [tool.snippet-fmt]
 directives = [ "code-block",]
