@@ -34,3 +34,18 @@ __email__: str = "dominic@davis-foster.co.uk"
 
 # TODO: Sign commit
 # See https://stackoverflow.com/questions/22968856/what-is-the-file-format-of-a-git-commit-object-data-structure
+
+# Temporary workaround for https://github.com/jelmer/dulwich/issues/1546
+
+
+def _extract_capabilities(text):
+	if b"\0" not in text:
+		return text, []
+	text, capabilities, *_ = text.rstrip().split(b"\0")
+	return (text, capabilities.strip().split(b" "))
+
+
+# 3rd party
+import dulwich.protocol
+
+dulwich.protocol.extract_capabilities = _extract_capabilities
