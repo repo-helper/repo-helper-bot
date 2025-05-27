@@ -37,15 +37,18 @@ __email__: str = "dominic@davis-foster.co.uk"
 
 # Temporary workaround for https://github.com/jelmer/dulwich/issues/1546
 
+# stdlib
+from typing import List, Tuple
 
-def _extract_capabilities(text):
+# 3rd party
+import dulwich.protocol
+
+
+def _extract_capabilities(text: bytes) -> Tuple[bytes, List[bytes]]:
 	if b"\0" not in text:
 		return text, []
 	text, capabilities, *_ = text.rstrip().split(b"\0")
 	return (text, capabilities.strip().split(b" "))
 
-
-# 3rd party
-import dulwich.protocol
 
 dulwich.protocol.extract_capabilities = _extract_capabilities
