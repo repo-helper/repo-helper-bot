@@ -46,3 +46,17 @@ mypy_version: "1.7.1"
 tox_unmanaged:
  - testenv
  - testenv:py312
+
+github_ci_requirements:
+ Linux:
+  post:
+   # Prefery binary wheels for older versions over sdists for newer ones
+   - pip config set global.prefer-binary true
+ Windows:
+  post:
+   # Prefery binary wheels for older versions over sdists for newer ones
+   - pip config set global.prefer-binary true
+ macOS:
+  post:
+   # Prefery binary wheels for older versions over sdists for newer ones
+   - pip config set global.prefer-binary true
