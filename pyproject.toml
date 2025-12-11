@@ -54,7 +54,7 @@ license-key = "MIT"
 package = "repo_helper_bot"
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.9"
 namespace_packages = true
 check_untyped_defs = true
 warn_unused_ignores = true
