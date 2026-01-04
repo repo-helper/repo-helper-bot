@@ -1,4 +1,4 @@
-git+https://github.com/repo-helper/repo_helper@c4f032a6dd7b3d8eefa5fb977d54d2f12ccb27bb
+git+https://github.com/repo-helper/repo_helper@c5929853eb0eba98b3b9acbe064550a4d5fbdcc8
 setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
 apeye>=1.4.1
 click==7.1.2
