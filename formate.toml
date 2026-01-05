@@ -27,25 +27,6 @@ lines_between_types = 0
 use_parentheses = true
 remove_redundant_aliases = true
 default_section = "THIRDPARTY"
-known_third_party = [
-    "apeye",
-    "click",
-    "domdf_python_tools",
-    "dulwich",
-    "flask",
-    "flask_githubapp",
-    "flask_sqlalchemy",
-    "github",
-    "github3_py",
-    "github3_utils",
-    "gunicorn",
-    "psycopg2",
-    "psycopg2_binary",
-    "requests",
-    "southwark",
-    "sqlalchemy",
-    "werkzeug",
-]
 known_first_party = [ "repo_helper_bot",]
 
 [config]
