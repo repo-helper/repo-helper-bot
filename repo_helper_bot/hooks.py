@@ -267,7 +267,9 @@ def on_check_run_completed() -> str:
 
 
 automerge_label = Label(
-		name="🤖 automerge", color="#87ceeb", description="Auto merge is enabled for this pull request."
+		name="🤖 automerge",
+		color="#87ceeb",
+		description="Auto merge is enabled for this pull request.",
 		)
 
 

@@ -50,7 +50,7 @@ def home() -> str:
 
 
 @app.route("/request/<username>/<repository>/")
-def request_run(username: str, repository: str) -> Tuple[str, int]:
+def request_run(username: str, repository: str) -> Tuple[str, int]:  # noqa: PRM002
 	"""
 	Route for the homepage.
 	"""
