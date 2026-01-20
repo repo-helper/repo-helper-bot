@@ -11,7 +11,7 @@ os.system("git stash")
 
 try:
 
-	head_sha = RequestsURL("https://api.github.com/repos/repo-helper/repo_helper/commits/master"
+	head_sha = RequestsURL("https://api.github.com/repos/repo-helper/repo_helper/commits/master",
 							).get().json()["sha"]
 
 	requirements, comments, invalid = read_requirements("requirements.txt", include_invalid=True)
