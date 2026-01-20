@@ -63,7 +63,7 @@ def on_push() -> str:
 
 	if github_app.payload["commits"] and github_app.payload["commits"][0]["committer"]["username"] == "web-flow":
 		# Merged PR
-		log(f"Push is a merge of a PR. Skipping.")
+		log("Push is a merge of a PR. Skipping.")
 		return ''
 
 	if pusher not in {"repo-helper", "repo-helper[bot]"}:
