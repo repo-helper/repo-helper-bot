@@ -82,7 +82,7 @@ include-package-data = true
 platforms = [ "Windows", "macOS", "Linux",]
 
 [tool.dep_checker]
-allowed_unused = [ "werkzeug", "gunicorn", "psycopg2", "psycopg2_binary",]
+allowed_unused = [ "werkzeug", "gunicorn", "psycopg2", "psycopg2_binary", "pyjwt",]
 
 [tool.dep_checker.name_mapping]
 github3_py = "github3"

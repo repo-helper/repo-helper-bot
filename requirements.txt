@@ -14,3 +14,4 @@ psycopg2-binary>=2.8.6
 southwark>=1.0.0
 sqlalchemy==1.3.22
 werkzeug<3
+pyjwt<2.11.0
