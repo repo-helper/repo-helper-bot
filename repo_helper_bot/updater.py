@@ -88,8 +88,10 @@ def update_repository(repository: Dict, recreate: bool = False) -> UpdateResult:
 	last_pr_date = datetime.fromtimestamp(db_repository.last_pr or 200)
 	now = datetime.now()
 	if not recreate and last_pr_date.day == now.day and last_pr_date.month == now.month:
-		print(f"A PR for {db_repository.fullname} has already been created today. Skipping.")
-		return 1
+		return UpdateResult(
+			msg=f"A PR for {db_repository.fullname} has already been created today. Skipping.",
+			ret=1,
+		)
 
 	owner = repository["owner"]["login"]
 	repository_name = repository["name"]
