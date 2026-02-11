@@ -32,7 +32,7 @@ from datetime import datetime
 from subprocess import Popen
 from tempfile import TemporaryDirectory
 from textwrap import indent, wrap
-from typing import Dict, Iterator, Optional, Tuple, Union
+from typing import Dict, Iterator, NamedTuple, Optional, Tuple, Union
 
 # 3rd party
 import click  # type: ignore[import-untyped]
@@ -62,7 +62,13 @@ from repo_helper_bot.utils import make_pr_details
 __all__ = ["run_update", "update_repository"]
 
 
-def update_repository(repository: Dict, recreate: bool = False) -> int:
+class UpdateResult(NamedTuple):
+	ret: int
+	pr_number: int = -1
+	msg: str = ''
+
+
+def update_repository(repository: Dict, recreate: bool = False) -> UpdateResult:
 	"""
 	Run the updater for the given repository.
 
@@ -100,8 +106,10 @@ def update_repository(repository: Dict, recreate: bool = False) -> int:
 	try:
 		github_repo.file_contents("repo_helper.yml")
 	except NotFoundError:
-		print(f"repo_helper.yml not found in the repository {repository['owner']['login']}/{repository['name']}")
-		return 1
+		return UpdateResult(
+				msg=f"repo_helper.yml not found in the repository {repository['owner']['login']}/{repository['name']}",
+				ret=1,
+				)
 
 	with TemporaryDirectory() as tmpdir:
 
@@ -123,7 +131,10 @@ def update_repository(repository: Dict, recreate: bool = False) -> int:
 			rh.load_settings()
 		except FileNotFoundError as e:
 			error_block = indent(str(e), '\t')
-			print(f"Unable to run 'repo_helper'.\nThe error was:\n{error_block}")
+			return UpdateResult(
+					msg=f"Unable to run 'repo_helper'.\nThe error was:\n{error_block}",
+					ret=1,
+					)
 
 		managed_files = rh.run()
 		staged_files = stage_changes(repo.path, managed_files)
@@ -131,7 +142,7 @@ def update_repository(repository: Dict, recreate: bool = False) -> int:
 		if not staged_files and recreate:
 			# Everything is up to date, close PR.
 			close_pr(owner, repository_name)
-			return 0
+			return UpdateResult(0)
 
 		try:
 			if not commit_changed_files(
@@ -143,17 +154,17 @@ def update_repository(repository: Dict, recreate: bool = False) -> int:
 					):
 				sys.stdout.flush()
 				sys.stderr.flush()
-				print("Failure!")
-				return 1
+				return UpdateResult(msg="Failure!", ret=1)
 
 			sys.stdout.flush()
 			sys.stderr.flush()
 
 		except CommitError as e:
 			indented_error = '\n'.join(f"\t{line}" for line in wrap(str(e)))
-			print(f"Unable to commit changes. The error was:\n\n{indented_error}")
-			print("Failure!")
-			return 1
+			return UpdateResult(
+					msg=f"Unable to commit changes. The error was:\n\n{indented_error}",
+					ret=1,
+					)
 
 		# Push
 		dulwich.porcelain.push(
@@ -186,8 +197,11 @@ def update_repository(repository: Dict, recreate: bool = False) -> int:
 		db_repository.last_pr = datetime.now().timestamp()
 		db.session.commit()
 
-		print("Success!")
-		return 0
+		return UpdateResult(
+				pr_number=created_pr.number,
+				msg="Success!",
+				ret=0,
+				)
 
 
 def run_update() -> Iterator[Tuple[str, int]]:
@@ -197,7 +211,9 @@ def run_update() -> Iterator[Tuple[str, int]]:
 
 	for repository in iter_installed_repos(context_switcher=context_switcher):
 		click.echo(repository["full_name"])
-		yield repository["full_name"], update_repository(repository)
+		result = update_repository(repository)
+		print(result.msg)
+		yield repository["full_name"], result.ret
 
 
 def close_pr(

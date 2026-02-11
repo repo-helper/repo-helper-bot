@@ -68,7 +68,7 @@ def on_push() -> str:
 
 	if pusher not in {"repo-helper", "repo-helper[bot]"}:
 		with commit_as_bot():
-			update_repository(github_app.payload["repository"])
+			print(update_repository(github_app.payload["repository"]).msg)
 
 	return ''
 
@@ -194,7 +194,7 @@ def on_issue_comment() -> str:
 			if "@repo-helper recreate" in comment["body"]:
 
 				with commit_as_bot():
-					update_repository(github_app.payload["repository"], recreate=True)
+					print(update_repository(github_app.payload["repository"], recreate=True).msg)
 
 	return ''
 
