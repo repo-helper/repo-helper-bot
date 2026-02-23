@@ -66,6 +66,9 @@ def request_run(username: str, repository: str) -> Tuple[str, int]:  # noqa: PRM
 		else:
 			return "Repository not found, or repo-helper-bot not installed on it.\n", 404
 
+	if result.msg:
+		print(result.msg)
+
 	if result.ret:
 		return f"<h2>An error occurred when running for {full_name}.</h2>", 500
 	elif result.pr_number > 0:
