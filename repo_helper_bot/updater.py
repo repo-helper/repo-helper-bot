@@ -66,6 +66,7 @@ class UpdateResult(NamedTuple):
 	ret: int
 	pr_number: int = -1
 	msg: str = ''
+	exception: Optional[Exception] = None
 
 
 def update_repository(repository: Dict, recreate: bool = False) -> UpdateResult:
@@ -132,11 +133,7 @@ def update_repository(repository: Dict, recreate: bool = False) -> UpdateResult:
 			rh = RepoHelper(tmpdir)
 			rh.load_settings()
 		except FileNotFoundError as e:
-			error_block = indent(str(e), '\t')
-			return UpdateResult(
-					msg=f"Unable to run 'repo_helper'.\nThe error was:\n{error_block}",
-					ret=1,
-					)
+			return UpdateResult(msg=f"Unable to run 'repo_helper'.", ret=1, exception=e)
 
 		managed_files = rh.run()
 		staged_files = stage_changes(repo.path, managed_files)
@@ -162,11 +159,7 @@ def update_repository(repository: Dict, recreate: bool = False) -> UpdateResult:
 			sys.stderr.flush()
 
 		except CommitError as e:
-			indented_error = '\n'.join(f"\t{line}" for line in wrap(str(e)))
-			return UpdateResult(
-					msg=f"Unable to commit changes. The error was:\n\n{indented_error}",
-					ret=1,
-					)
+			return UpdateResult(msg=f"Unable to commit changes.", ret=1, exception=e)
 
 		# Push
 		dulwich.porcelain.push(

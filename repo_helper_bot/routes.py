@@ -27,6 +27,7 @@ HTTP routes.
 #
 
 # stdlib
+from textwrap import wrap
 from typing import Tuple
 
 # 3rd party
@@ -69,8 +70,13 @@ def request_run(username: str, repository: str) -> Tuple[str, int]:  # noqa: PRM
 	if result.msg:
 		print(result.msg)
 
+	if result.exception:
+		# TODO: print full traceback
+		error_block = '\n'.join(f"\t{line}" for line in wrap(str(result.exception)))
+		print(f"The error was:\n{error_block}")
+
 	if result.ret:
-		return f"<h2>An error occurred when running for {full_name}.</h2>", 500
+		return f"<h2>An error occurred when running for {full_name}.</h2><p>{result.msg}</p>", 500
 	elif result.pr_number > 0:
 		return f"<h2>Run successful for {full_name}.</h2><h3>View the PR at <a href='https://github.com/{full_name}/pull/{result.pr_number}'>github.com/{full_name}/pull/{result.pr_number}</a></h3>", 200
 	else:
