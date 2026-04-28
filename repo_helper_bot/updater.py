@@ -185,7 +185,9 @@ def update_repository(repository: Dict, recreate: bool = False) -> UpdateResult:
 		base = github_repo.default_branch
 		head = f"{owner}:{BRANCH_NAME}"
 
-		if not list(github_repo.pull_requests(state="open", base=base, head=head)):
+		created_pr: Optional[ShortPullRequest]
+		existing_prs = list(github_repo.pull_requests(state="open", base=base, head=head))
+		if not existing_prs:
 			created_pr = github_repo.create_pull(
 					title="[repo-helper] Configuration Update",
 					base=base,
@@ -195,6 +197,8 @@ def update_repository(repository: Dict, recreate: bool = False) -> UpdateResult:
 
 			if created_pr is not None:
 				db_repository.add_pr(int(created_pr.number))
+		else:
+			created_pr = existing_prs.pop()
 
 		db_repository.last_pr = datetime.now().timestamp()
 		db.session.commit()
