@@ -31,7 +31,6 @@ import sys
 from datetime import datetime
 from subprocess import Popen
 from tempfile import TemporaryDirectory
-from textwrap import indent, wrap
 from typing import Dict, Iterator, NamedTuple, Optional, Tuple, Union
 
 # 3rd party
@@ -133,7 +132,7 @@ def update_repository(repository: Dict, recreate: bool = False) -> UpdateResult:
 			rh = RepoHelper(tmpdir)
 			rh.load_settings()
 		except FileNotFoundError as e:
-			return UpdateResult(msg=f"Unable to run 'repo_helper'.", ret=1, exception=e)
+			return UpdateResult(msg="Unable to run 'repo_helper'.", ret=1, exception=e)
 
 		managed_files = rh.run()
 		staged_files = stage_changes(repo.path, managed_files)
@@ -159,7 +158,7 @@ def update_repository(repository: Dict, recreate: bool = False) -> UpdateResult:
 			sys.stderr.flush()
 
 		except CommitError as e:
-			return UpdateResult(msg=f"Unable to commit changes.", ret=1, exception=e)
+			return UpdateResult(msg="Unable to commit changes.", ret=1, exception=e)
 
 		# Push
 		dulwich.porcelain.push(
